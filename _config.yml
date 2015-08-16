@@ -1,11 +1,24 @@
-# Site settings
-title: Anna Tomka 
-email: tomkaanna@gmail.com
-description: > # Web developer site with all the good stuff like Javascript,AngularJS,Ionic etc. 
-baseurl: "" # the subpath of your site, e.g. /blog/
-url: "http://annatomka.github.io" # the base hostname & protocol for your site
-twitter_username: anna_tomka
-github_username:  annatomka
+# Dependencies
+markdown:         redcarpet
+pygments:         true
 
-# Build settings
-markdown: kramdown
+# Permalinks
+permalink:        pretty
+
+# Setup
+title:            Anna Tomka
+tagline:          'Web Developer'
+description:      'This is a description'
+url:              http://annatomka.github.io
+
+author:
+  name:           'Anna Tomka'
+  url:            https://twitter.com/anna_tomka
+
+paginate:         5
+
+# Custom vars
+version:          2.0.0
+
+github:
+  repo:           https://github.com/annatomka
