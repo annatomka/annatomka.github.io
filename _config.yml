@@ -1,24 +1,22 @@
-# Dependencies
-markdown:         redcarpet
-pygments:         true
-
 # Permalinks
-permalink:        pretty
+#
+# Use of `relative_permalinks` ensures post links from the index work properly.
+permalink:           pretty
+relative_permalinks: true
 
 # Setup
-title:            Anna Tomka
-tagline:          'Web Developer'
-description:      'This is a description'
-url:              http://annatomka.github.io
+title:               Anna Tomka
+tagline:             'Web Developer'
+description:         'This is a simple blog presenting short entries about web development.'
+url:                 http://annatomka.github.io
+baseurl:             ''
+paginate:            5
 
+# About/contact
 author:
-  name:           'Anna Tomka'
-  url:            https://twitter.com/anna_tomka
-
-paginate:         5
+  name:              Anna Tomka
+  url:               https://twitter.com/anna_tomka
+  email:             tomkaanna@gmail.com
 
 # Custom vars
-version:          2.0.0
-
-github:
-  repo:           https://github.com/annatomka
+version:             1.0.0
