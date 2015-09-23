@@ -133,8 +133,11 @@ var loggedinUser = AccountService.getLoggedInUser();
 profileDialogCtrl.user = {};
 
 angular.copy(loggedinUser,profileDialogCtrl.user);
+</code></pre>
 
 Elmentési lehetőség: 
+
+<pre><code>
 profileDialogCtrl.save = function () {
 
 UserService.update(profileDialogCtrl.user).$promise.then(
