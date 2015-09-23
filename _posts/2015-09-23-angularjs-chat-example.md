@@ -32,7 +32,8 @@ Ezt tömörítsük ki egy tetszőleges mappába.
 
 Importáljuk be a projektet Intellij-be.
 
-Regisztráció
+### Regisztráció
+
 A kiindulási állapotban van egy login formunk, de sajnos nincs userünk mellyel be tudnánk lépni a chatbe. Ebben a szakaszban a regisztrációs formot készítjük el. 
 Hozzuk létre az index.routes.js-ben a route-ot: 
 
@@ -152,19 +153,20 @@ $mdDialog.hide();
 };
 </code></pre>
 
-Egészítsük ki a template-et (profile.dialog.html) hogy betöltse a basic formot:
+Egészítsük ki a template-et (profile.dialog.html) hogy betöltse a basic formot (az md-dialog-content tagek közé):
 
 <pre><code>
 &#x3C;basic-info user=&#x22;profileDialogCtrl.user&#x22;&#x3E;&#x3C;/basic-info&#x3E;
 </code></pre>
 
-valamint a click esemény: 
+Ugyanitt hívjuk meg a profilt mentő függvényt a gomb click eseményekor: 
 
 <pre><code>
 ng-click="profileDialogCtrl.save()"
 </code></pre>
 
-Egy kis oldalsáv tuning következik. A leftnav.directive.js-ben injektáljuk az AccountService-t és kérjük le az aktuális usert: 
+Egy kis oldalsáv tuning következik. 
+A leftnav.directive.js-ben injektáljuk az AccountService-t és kérjük le az aktuális usert: 
 
 <pre><code>
 leftnavCtrl.user = AccountService.getLoggedInUser();
@@ -204,9 +206,7 @@ background-color: white;&#x22;/&#x3E;
 
 #### step_create_room
 
-Szobákról még nem volt szó, így rögtön létre is hozhatjuk az aspektushoz tartozó mappát: room.
-
-Elsőként a modellt alkossuk meg: room.model.js
+Szobákról még nem volt szó, elsőként a modellt alkossuk meg: room.model.js a room mappában.
 
 <pre><code>
 (function () {
@@ -240,7 +240,7 @@ function RoomUser(apiUrl,$resource) {
 })();
 </code></pre>
 
-Következik a room service: 
+Következik a room service. Hozzuk létre a room.service.js fájlt a következő tartalommal: 
 
 <pre><code>
 (function () {
@@ -262,7 +262,7 @@ function RoomService($resource, apiUrl,Room, RoomUser) {
 })();
 </code></pre>
 
-nyitó gomb: direktíva már létezik, egy click esemény: 
+A szobát létrehozó gomb direktívája a create.room.fab.directive.js-ben található. Innen hiányzik a click eseményt kezelő függvény. Egészítsük ki vele a direktívát:
 
 <pre><code>
 createRoomCtrl.create = function(){
@@ -331,21 +331,24 @@ Ebben a szakaszban létrehozunk egy szobákat listázó panelt, amely a menüben
 
 Egészítsük ki a RoomService-t:
 * az összes szoba lekérdezésére: 
+
 <pre><code>
 this.getRooms = getRooms;
-
 function getRooms() {
     var rooms = Room.query();
     return rooms;
   }
 </code></pre>
+
 * szoba felhasználóinak lekérdezése:
+
 <pre><code>
 this.getUsers = getUsers;
 
 function getUsers(roomId) {
 return RoomUser.query({id: roomId});
 }
+
 </code></pre>
 
 Hozzunk létre a menüben egy gombot, amire felnyílik majd a szobalista: 
