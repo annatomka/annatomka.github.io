@@ -362,8 +362,10 @@ Rooms
 
 Ez egy sima angularmaterial-os gomb, kiegészítve egy direktívával, amit még nem írtunk meg, így tegyük meg azt is.
 
-<pre><code>
+
 room/room.list.directive.js létrehozása:
+
+<pre><code>
 (function() {
 'use strict';
 
@@ -393,11 +395,7 @@ function RoomListOpener($mdBottomSheet) {
 })();
 </code></pre>
 
-A RoomListControllerben kérjük le az összes szobát:
 
-<pre><code>
-roomListCtrl.rooms = RoomService.getRooms();
-</code></pre>
 
 A link függvénybe tegyünk egy click eseménykezelőt:  
 
@@ -419,7 +417,13 @@ $mdBottomSheet.show({
       });
 </code></pre>
 
-Már csak a room.list.tmpl.html hiányzik:
+Itt használjuk a már definiált RoomListControllert, de nem csinál még semmit sem. Meg szeretnénk jeleníteni az összes szobát, kérjük hát le a RoomService-től:
+
+<pre><code>
+roomListCtrl.rooms = RoomService.getRooms();
+</code></pre>
+
+Már csak a room.list.tmpl.html hiányzik, hozzuk létre a következő tartalommal:
 
 <pre><code>
 &#x3C;md-bottom-sheet class=&#x22;md-list md-has-header&#x22;&#x3E;
@@ -473,7 +477,7 @@ Egészítsük ki a következő függvényekkel:
 * Aktuálisan megnyitott szoba index:
 
 <pre><code>
-roomFactoryObj.setSelectedIndex = function(newIndex){
+  roomFactoryObj.setSelectedIndex = function(newIndex){
     $localStorage.index  = newIndex;
   };
 
@@ -544,10 +548,8 @@ function syncRoomsFromLocalStorage(){
   syncRoomsFromLocalStorage();
 </code></pre>
 
-A szoba listán ha rákattintunk egy elemre akkor szeretnénk megnyitni egy szobát.
-
+A szoba listán ha rákattintunk egy elemre akkor szeretnénk megnyitni egy szobát. Ezzel egy új navigációhoz jutunk, így az index.route.js-ben: 
 <pre><code>
-Ezzel egy új navigációhoz jutunk, így az index.route.js-ben: 
 .state('rooms.room', {
 url: '/:id',
 templateUrl: 'app/room/room.item.html',
@@ -557,9 +559,9 @@ data: {authenticated: true}
 })
 </code></pre>
 
-hozzuk létre az itt említett RoomItemControllert! 
+hozzuk létre az itt említett RoomItemControllert: room.item.controller.js fájl létrehozása a room mappában a következő tartalommal: 
+
 <pre><code>
-room.item.controller.js
 (function () {
 'use strict';
 
@@ -643,8 +645,7 @@ Készítsük el a szoba megjelenítésének alapjait. room.item.html létrehozá
 &#x3C;/div&#x3E;
 </code></pre>
 
-room.list.directive.js fájlban
-openedRoomsFactory függőség hozzáadása és a következő függvény definiálása:
+room.list.directive.js fájlban vegyük fel az openedRoomsFactory függőséget és definiáljuk a szoba megnyitásáárét felelős függvényt:
 
 <pre><code>
   roomListCtrl.openRoom = function(index,room){
@@ -720,7 +721,7 @@ $scope.$watch("roomsCtrl.selectedIndex",function(newIndex){
   });
 </code></pre>
 
-A tabos elrendezés nézete: rooms.tabs.tmpl.html
+Hozzuk létre a tabos elrendezés nézetét: room.tabs.tmpl.html a következő tartalommal:
 
 <pre><code>
 &#x3C;md-content flex ng-if=&#x22;roomsCtrl.rooms.length &#x3E; 0&#x22;&#x3E;
@@ -736,10 +737,9 @@ A tabos elrendezés nézete: rooms.tabs.tmpl.html
 &#x3C;/md-content&#x3E;
 </code></pre>
 
-Ne feledkezzünk meg kilépéskor leiratkoztatni a szobáról a usert: 
+Ne feledkezzünk meg kilépéskor leiratkoztatni a szobáról a usert. Ehhez egészítsük ki az account.service.js logout függvényét és vegyük fel az openedRoomsFactory és a socketFactory függőségeket is: 
 
 <pre><code>
-account.service.js logout függvény kiegészítése: 
 var openedRooms = openedRoomsFactory.getRooms();
 //logout from rooms
 _.forEach(openedRooms, function (room) {
@@ -754,8 +754,9 @@ delete $localStorage.rooms;
 delete $localStorage.index;
 </code></pre>
 
+A routingot is egészítsük ki az index.routes.js fájlban. Itt már létezik egy "rooms" nevű állapot, ezt egészítsük ki, hogy a következőképpen nézzen ki:
+
 <pre><code>
-routing: 
 .state('rooms', {
   url: '/rooms',
   templateUrl: 'app/room/room.tabs.tmpl.html',
@@ -763,12 +764,9 @@ routing:
   controllerAs: 'roomsCtrl',
   data: {authenticated: true}
 });
-
-$urlRouterProvider.when('/', 'rooms');
 </code></pre>
 
-create.room.fab.directive.js-ben: 
-openedRoomsFactory függőség hozzáadása
+A create.room.fab.directive.js-hez adjuk hozzá az openedRoomsFactory függőséget valamint atdjuk meg azt is, hogy ha új szobát hozunk létre, az egyből bekerüljön a megnyitott szobák közé és meg is nyíljon: 
 
 <pre><code>
 openedRoomsFactory.addRoom(result);
@@ -930,7 +928,7 @@ function message() {
 })();
 </code></pre>
 
-Túl sok mindent nem csinál, megjeleníti a megadott template-et, ami még nem létezik így azt is hozzuk létre:
+Túl sok mindent nem csinál, megjeleníti a megadott template-et, ami még nem létezik. Hozzuk létre a hiányzó message.item.tmpl.html fájlt a következő tartalommal:
 
 <pre><code>
 &#x3C;md-list-item class=&#x22;contact-item md-2-line selected&#x22;&#x3E;
