@@ -3,25 +3,26 @@ layout: post
 title: AngularJS Chat
 ---
 
-##Feladat
-A gyakorlat során a cél egy chat alkalmazás létrehozása AngularJS, Angular Material, Socket IO felhasználásával. 
+## Goal
+This is an example that shows how to create a simple Chat application with the following technologies: AngularJS, Angular Material, Socket IO. 
+The full example is available on branch *master*, but you can start from nearly scratch when you checkout branch *step_registration*.
  
-###A fő funkciók: 
+### Main features: 
 * Login
-* Regisztráció
+* Registration
 * Logout	
-* Profil megtekintése, módosítása
-* Új szoba létrehozása
-* Szobák listázása
-* Szoba megnyitása
-* szobában lévő felhasználók megjelenítése
-* üzenetek megjelenítése
-* új üzenet írása
+* View/Update Profile
+* Create room
+* List rooms
+* Open room
+* List users in a room
+* List messages in a room
+* Create new message
 
-## Forráskód
+## Source
 
-### Forráskód elérése Git-el
-Git esetén a következő paranccsal klónozzuk a repót: 
+### Git
+If you use Git, you can clone the repository of the application with the following command:
 <pre><code>git clone https://github.com/annatomka/angular-chat.git</code></pre>
 
 ###Letöltés zip-ként
