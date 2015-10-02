@@ -25,13 +25,10 @@ The full example is available on branch *master*, but you can start from nearly 
 If you use Git, you can clone the repository of the application with the following command:
 <pre><code>git clone https://github.com/annatomka/angular-chat.git</code></pre>
 
-###Letöltés zip-ként
-Ha nincs Git, akkor a következő linkről zip-ként is letölthetjük:
+### Download as zip
+If you don't want / can't use Git, you can download the source from the following url:
 
 https://github.com/annatomka/angular-chat/archive/step_registration.zip
-Ezt tömörítsük ki egy tetszőleges mappába. 
-
-Importáljuk be a projektet Intellij-be.
 
 ### Regisztráció
 
