@@ -115,16 +115,16 @@ class=&#x22;md-primary md-button md-cyan-theme&#x22; ui-sref=&#x22;registration&
 aria-label=&#x22;Don&#x27;t have an account? Create one now&#x22;&#x3E;Don&#x27;t have an account? Create one now&#x3C;/a&#x3E;
 </code></pre> 
  
-### Profil
+### Profile
 
 #### step_profile
+If you've got stucked in the previous step, just switch to branch *step_profile* and continue work from here:
 
-Ha nem sikerült volna az előző szakaszt végigvinni, a step_profile branch-re válts át és innen folytasd a munkát:
 <pre><code>
 git checkout step_profile
 </code></pre>
 
-Egészítsük ki a direktívát (profile.directive.js) hogy betöltse az aktuális usert:  
+Complete the *profile.directive.js* directive to load the current user:   
 
 <pre><code>
 var loggedinUser = AccountService.getLoggedInUser();
@@ -133,7 +133,7 @@ profileDialogCtrl.user = {};
 angular.copy(loggedinUser,profileDialogCtrl.user);
 </code></pre>
 
-Elmentési lehetőség: 
+We also want to save the profile details, so add the following function too: 
 
 <pre><code>
 profileDialogCtrl.save = function () {
@@ -150,26 +150,25 @@ $mdDialog.hide();
 };
 </code></pre>
 
-Egészítsük ki a template-et (profile.dialog.html) hogy betöltse a basic formot (az md-dialog-content tagek közé):
+Extend the template (profile.dialog.html) to load the basic form (between md-dialog-content tags):
 
 <pre><code>
 &#x3C;basic-info user=&#x22;profileDialogCtrl.user&#x22;&#x3E;&#x3C;/basic-info&#x3E;
 </code></pre>
 
-Ugyanitt hívjuk meg a profilt mentő függvényt a gomb click eseményekor: 
+In the same template call the function that saves the profile when the user clicks the button:
 
 <pre><code>
 ng-click="profileDialogCtrl.save()"
 </code></pre>
 
-Egy kis oldalsáv tuning következik. 
-A leftnav.directive.js-ben injektáljuk az AccountService-t és kérjük le az aktuális usert: 
+Let's upgrade our sidebar to a whole new level. To do this, inject AccountService in the *leftnav.directive.js* and retrieve the current user:
 
 <pre><code>
 leftnavCtrl.user = AccountService.getLoggedInUser();
 </code></pre>
 
-hozzunk létre egy gombot a sidenavon (leftnav.html): 
+Let's create a button on the sidenav to reach user profile (*leftnav.html*):
 
 <pre><code>
 &#x3C;md-button profile-button class=&#x22;md-accent&#x22; layout=&#x22;row&#x22;&#x3E;
@@ -177,7 +176,7 @@ My Profile
 &#x3C;/md-button&#x3E;
 </code></pre>
 
-Ha már úgyis itt vagyunk, jelenítsük meg a bejelentkezett usert (az első md-content közé): 
+We should also display the loggedin user, so paste the following code between the first md-content tags also in the *leftnav.html* template:
 
 <pre><code>
 &#x3C;img class=&#x22;avatar&#x22; ng-src=&#x22;{{ leftnavCtrl.user.imageUrl }}&#x22;/&#x3E;
@@ -185,13 +184,14 @@ Ha már úgyis itt vagyunk, jelenítsük meg a bejelentkezett usert (az első md
 &#x3C;small class=&#x22;username&#x22; layout=&#x22;row&#x22; layout-align=&#x22;center center&#x22;&#x3E;@{{ leftnavCtrl.user.username}}&#x3C;/small&#x3E;
 </code></pre>
 
-A menübe is tegyük ki a user képét, amire kattintva bejön a profiloldal. Ehhez a menu.directive.js-ben AccountService injektálása és:
+Let's put the image of the user in the menu. To do this first inject AccountService in the *menu.directive.js* and query the loggedin user:
 
 <pre><code>
 menuCtrl.user = AccountService.getLoggedInUser();
 </code></pre>
 
-menu.html-ben: 
+Display the user avatar as a button (menu.html), that way the user can click on it and edit its profile:
+
 <pre><code>
 &#x3C;md-button profile-button class=&#x22;md-icon-button&#x22; aria-label=&#x22;More&#x22;  ng-if=&#x22;$root.loggedIn&#x22;&#x3E;
 &#x3C;img ng-src=&#x22;{{ menuCtrl.user.imageUrl }}&#x22; class=&#x22;md-avatar message-avatar&#x22; style=&#x22;    height: 50px;
