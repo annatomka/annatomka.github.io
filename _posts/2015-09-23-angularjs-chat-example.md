@@ -30,10 +30,9 @@ If you don't want / can't use Git, you can download the source from the followin
 
 https://github.com/annatomka/angular-chat/archive/step_registration.zip
 
-### Regisztráció
+### Registration
 
-A kiindulási állapotban van egy login formunk, de sajnos nincs userünk mellyel be tudnánk lépni a chatbe. Ebben a szakaszban a regisztrációs formot készítjük el. 
-Hozzuk létre az index.routes.js-ben a route-ot: 
+We have a login form as a starting form, but unfortunately there's no user we could log in to the chat. For this purpose let's create the registration form in this section. Extend index.routes.js with the following route: 
 
 <pre><code>
 .state('registration', {
@@ -44,8 +43,7 @@ controllerAs: 'registrationCtrl'
 })
 </code></pre>
 
-A kódból látható, hogy kell készítenünk egy template-et és egy controllert is…
-Hozzuk létre a registration mappát. Ebben pedig a registration.controller.js fájlt a következő tartalommal: 
+As you can see from the code above we need a template and a controller too... Create folder *registration* and place registration.controller.js here with the following content:
 
 <pre><code>
 (function () {
@@ -74,7 +72,7 @@ function RegistrationController($rootScope, $scope, UserService, User, AccountSe
 })();
 </code></pre>
 
-A registration.html fájl tartalma: 
+Add registration.html with the following HTML:
 
 <pre>
 <code>
@@ -109,7 +107,8 @@ A registration.html fájl tartalma:
 </code>
 </pre>
 
-A login.html-ben vegyünk fel egy regisztrációs gombot: 
+We need to link somehow the registration form with the login form, so add a registration button to login.html as the following example shows: 
+
 <pre><code>
 &#x3C;a
 class=&#x22;md-primary md-button md-cyan-theme&#x22; ui-sref=&#x22;registration&#x22;
