@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      Openlayers battles - Is this polygon convex or not? &middot; Anna Tomka
+    
+  </title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/poole.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+  <link rel="stylesheet" href="/public/css/lanyon.css">
+  <link rel="stylesheet" href="/public/css/custom.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Serif:400,400italic,700%7CPT+Sans:400">
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/public/apple-touch-icon-precomposed.png">
+  <link rel="shortcut icon" href="/public/favicon.ico">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+</head>
+
+
+  <body>
+
+    <!-- Target for toggling the sidebar `.sidebar-checkbox` is for regular
+     styles, `#sidebar-checkbox` for behavior. -->
+<input type="checkbox" class="sidebar-checkbox" id="sidebar-checkbox">
+
+<!-- Toggleable sidebar -->
+<div class="sidebar" id="sidebar">
+	<img style="width: 100%; margin-bottom: 0; border-radius: 0;" src="/public/at_colored.jpg">
+  <div class="sidebar-item">
+	  
+    <p>This is a simple blog presenting short entries about web development.</p>
+  </div>
+
+  <nav class="sidebar-nav">
+    <a class="sidebar-nav-item" href="/">Home</a>
+
+    
+
+    
+    
+      
+        
+          <a class="sidebar-nav-item" href="/about/">About</a>
+        
+      
+    
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+
+    <span class="sidebar-nav-item">Currently v1.1.0</span>
+  </nav>
+
+  <div class="sidebar-item">
+    <p>
+      &copy; 2015. All rights reserved.
+    </p>
+  </div>
+</div>
+
+
+    <!-- Wrap is the content to shift when toggling the sidebar. We wrap the
+         content to avoid any CSS collisions with our real content. -->
+    <div class="wrap">
+      <div class="masthead">
+        <div class="container">
+          <h3 class="masthead-title">
+            <a href="/" title="Home">Anna Tomka</a>
+            <small>Web Developer</small>
+          </h3>
+        </div>
+      </div>
+
+      <div class="container content">
+        <div class="post">
+  <h1 class="post-title">Openlayers battles - Is this polygon convex or not?</h1>
+  <span class="post-date">16 Aug 2015</span>
+  <div class='message'>
+Once upon a time there was a request from the customer to be able to draw polygons on a map. Later there were more and more feature requests to transfom this polygon editor to a swiss army knife. One of them was to prevent users to draw concave polygons on the map.
+</div>
+<p>This would be pretty easy - I thought - if it were only a wonderful Openlayers function e.g <code>polygon.isConvex()</code>. But it wasn&#8217;t, or at least I could find it in version 2.13.1. I was searching the internet, trying to find the simplest solution, because I was sure there is a more elegant and shorter solution than hacking with angles.<br /> Finally <b>StackOverflow</b> came to my help (as always :). In <a href='http://stackoverflow.com/questions/471962/how-do-determine-if-a-polygon-is-complex-convex-nonconvex'>this thread</a> I found the most suitable algorithm for my need.</p>
+<blockquote>
+<div>
+A polygon is a set of points in a list where the consecutive points form the boundary. It is much easier to figure out whether a polygon is convex or not (and you don't have to calculate any angles, either):</div>
+<div>
+For each consecutive pair of edges of the polygon (each triplet of points), compute the z-component of the cross product of the vectors defined by the edges pointing towards the points in increasing order. Take the cross product of these vectors:</div>
+<pre><code> given p[k], p[k+1], p[k+2] each with coordinates x, y:
+ dx1 = x[k+1]-x[k]
+ dy1 = y[k+1]-y[k]
+ dx2 = x[k+2]-x[k+1]
+ dy2 = y[k+2]-y[k+1]
+ zcrossproduct = dx1*dy2 - dy1*dx2
+</code></pre>
+<div>
+The polygon is convex if the z-components of the cross products are either all positive or all negative. Otherwise the polygon is nonconvex.</div>
+<div>
+If there are N points, make sure you calculate N cross products, e.g. be sure to use the triplets (p[N-2],p[N-1],p[0]) and (p[N-1],p[0],p[1]).</div>
+</blockquote>
+<p>You can checkout my Javascript implementation of this algorithm <a href='https://gist.github.com/annatomka/82715127b74473859054'>here</a>.</p>
+<a style='margin-left: auto; margin-right: auto;'><img border='0' src='http://1.bp.blogspot.com/-wAR9htveRgk/VdB0wUYMt8I/AAAAAAAAIDI/MiROVlD0zt0/s1600/geofence_invalid_concave2.png' /></a>
+<p>Openlayers concave shape example</p>
+</div>
+
+<div class="related">
+  <h2>Related Posts</h2>
+  <ul class="related-posts">
+    
+      <li>
+        <h3>
+          <a href="/2015/09/23/angularjs-chat-example/">
+            AngularJS Chat
+            <small>23 Sep 2015</small>
+          </a>
+        </h3>
+      </li>
+    
+      <li>
+        <h3>
+          <a href="/2015/08/16/angularjs-2-example/">
+            Batman vs Superman - AngularJS 2 example with Firebase
+            <small>16 Aug 2015</small>
+          </a>
+        </h3>
+      </li>
+    
+  </ul>
+</div>
+
+      </div>
+    </div>
+
+    <label for="sidebar-checkbox" class="sidebar-toggle"></label>
+
+    <script>
+      (function(document) {
+        var toggle = document.querySelector('.sidebar-toggle');
+        var sidebar = document.querySelector('#sidebar');
+        var checkbox = document.querySelector('#sidebar-checkbox');
+
+        document.addEventListener('click', function(e) {
+          var target = e.target;
+
+          if(!checkbox.checked ||
+             sidebar.contains(target) ||
+             (target === checkbox || target === toggle)) return;
+
+          checkbox.checked = false;
+        }, false);
+      })(document);
+    </script>
+  </body>
+</html>
