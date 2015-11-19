@@ -27,9 +27,9 @@ Demo is available here: https://angularchatexample.firebaseapp.com
 
 ##### Git
 If you use Git, you can clone the repository of the application with the following command:
-```javascript
+{% highlight js %}
 git clone https://github.com/annatomka/angular-chat.git
-```
+{% endhighlight %}
 
 ### Download as zip
 If you don't want / can't use Git, you can download the source from the following url:
