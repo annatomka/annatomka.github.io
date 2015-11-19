@@ -1,0 +1,912 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+ <title>Anna Tomka</title>
+ <link href="http://annatomka.github.io/atom.xml" rel="self"/>
+ <link href="http://annatomka.github.io/"/>
+ <updated>2015-11-19T15:39:21+01:00</updated>
+ <id>http://annatomka.github.io</id>
+ <author>
+   <name>Anna Tomka</name>
+   <email>tomkaanna@gmail.com</email>
+ </author>
+
+ 
+ <entry>
+   <title>Batman vs Superman</title>
+   <link href="http://annatomka.github.io/2015/11/19/batman-vs-superman/"/>
+   <updated>2015-11-19T00:00:00+01:00</updated>
+   <id>http://annatomka.github.io/2015/11/19/batman-vs-superman</id>
+   <content type="html">&lt;h2 id='goal'&gt;Goal&lt;/h2&gt;
+
+&lt;p&gt;There was a previous post about my demo site Batman vs Superman. It&amp;#8217;s a simple voting application, what I created for a Google IO Extended demonstration. It was made with AngularJS 2 in march, but the API changed a lot (really lot) since then so I started to update my demo too. Meanwhile I&amp;#8217;ve got some ideas too to improve the main features a little bit. I&amp;#8217;m planning to create a step-by-step tutorial that will describe how to build this application on your own. I also have other ideas which are currently under development with some great developers :) I will post about them as soon as they reach a beta version. Until then checkout the actual state of the Batman vs Superman site.&lt;/p&gt;</content>
+ </entry>
+ 
+ <entry>
+   <title>AngularJS Chat</title>
+   <link href="http://annatomka.github.io/2015/09/23/angularjs-chat-example/"/>
+   <updated>2015-09-23T00:00:00+02:00</updated>
+   <id>http://annatomka.github.io/2015/09/23/angularjs-chat-example</id>
+   <content type="html">&lt;h2 id='goal'&gt;Goal&lt;/h2&gt;
+
+&lt;p&gt;This is an example that shows how to create a simple Chat application with the following technologies: AngularJS, Angular Material, Socket IO. The full example is available on branch &lt;em&gt;master&lt;/em&gt;, but you can start from nearly scratch when you checkout branch &lt;em&gt;step_registration&lt;/em&gt;.&lt;/p&gt;
+
+&lt;h3 id='main_features'&gt;Main features:&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Login&lt;/li&gt;
+
+&lt;li&gt;Registration&lt;/li&gt;
+
+&lt;li&gt;Logout&lt;/li&gt;
+
+&lt;li&gt;View/Update Profile&lt;/li&gt;
+
+&lt;li&gt;Create room&lt;/li&gt;
+
+&lt;li&gt;List rooms&lt;/li&gt;
+
+&lt;li&gt;Open room&lt;/li&gt;
+
+&lt;li&gt;List users in a room&lt;/li&gt;
+
+&lt;li&gt;List messages in a room&lt;/li&gt;
+
+&lt;li&gt;Create new message&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id='source'&gt;Source&lt;/h2&gt;
+
+&lt;h3 id='git'&gt;Git&lt;/h3&gt;
+
+&lt;p&gt;If you use Git, you can clone the repository of the application with the following command: &lt;pre&gt;&lt;code&gt;git clone https://github.com/annatomka/angular-chat.git&lt;/code&gt;&lt;/pre&gt;&lt;/p&gt;
+
+&lt;h3 id='download_as_zip'&gt;Download as zip&lt;/h3&gt;
+
+&lt;p&gt;If you don&amp;#8217;t want / can&amp;#8217;t use Git, you can download the source from the following url:&lt;/p&gt;
+
+&lt;p&gt;https://github.com/annatomka/angular-chat/archive/step_registration.zip&lt;/p&gt;
+
+&lt;h3 id='registration'&gt;Registration&lt;/h3&gt;
+
+&lt;p&gt;We have a login form as a starting form, but unfortunately there&amp;#8217;s no user we could log in to the chat. For this purpose let&amp;#8217;s create the registration form in this section. Extend index.routes.js with the following route:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+.state('registration', {
+url: '/registration',
+templateUrl: 'app/registration/registration.html',
+controller: 'RegistrationController',
+controllerAs: 'registrationCtrl'
+})
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;As you can see from the code above we need a template and a controller too&amp;#8230; Create folder &lt;em&gt;registration&lt;/em&gt; and place registration.controller.js here with the following content:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+(function () {
+'use strict';
+
+angular
+  .module('angularChat')
+  .controller('RegistrationController', RegistrationController);
+
+/** @ngInject */
+function RegistrationController($rootScope, $scope, UserService, User, AccountService, $state) {
+  var registrationCtrl = this;
+  registrationCtrl.user = new User();
+
+  registrationCtrl.register = function () {
+    UserService.create(registrationCtrl.user).then(function (user) {
+      $rootScope.toast(&quot;Registration successful! You are now logged in :)&quot;);
+      AccountService.login(user.username, user.password).then(function(){
+        $state.go(&quot;rooms&quot;,{},{reload: true});
+      });
+    }, function (error) {
+
+    });
+  }
+}
+})();
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Add registration.html with the following HTML:&lt;/p&gt;
+&lt;pre&gt;
+&lt;code&gt;
+&amp;#x3C;div class=&amp;#x22;registration-frame&amp;#x22; ui-view=&amp;#x22;&amp;#x22; flex=&amp;#x22;&amp;#x22; layout=&amp;#x22;row&amp;#x22;&amp;#x3E;
+&amp;#x3C;div layout=&amp;#x22;row&amp;#x22; flex=&amp;#x22;&amp;#x22; layout-padding=&amp;#x22;&amp;#x22; layout-fill=&amp;#x22;&amp;#x22; layout-align=&amp;#x22;center center&amp;#x22; class=&amp;#x22;ng-scope&amp;#x22;&amp;#x3E;
+  &amp;#x3C;div flex=&amp;#x22;40&amp;#x22; flex-lg=&amp;#x22;50&amp;#x22; flex-md=&amp;#x22;70&amp;#x22; flex-sm=&amp;#x22;100&amp;#x22;&amp;#x3E;
+    &amp;#x3C;md-card class=&amp;#x22;md-cyan-theme&amp;#x22;&amp;#x3E;
+      &amp;#x3C;md-toolbar class=&amp;#x22;md-cyan-theme&amp;#x22; layout-padding&amp;#x3E;
+        &amp;#x3C;div layout=&amp;#x22;column&amp;#x22; layout-align=&amp;#x22;center&amp;#x22; class=&amp;#x22;padding-20 text-center&amp;#x22;&amp;#x3E;
+          &amp;#x3C;img ng-src=&amp;#x22;img/logo.png&amp;#x22;&amp;#x3E;
+          &amp;#x3C;h1 layout=&amp;#x22;row&amp;#x22; layout-align=&amp;#x22;center center&amp;#x22; class=&amp;#x22;md-headline ng-scope&amp;#x22; translate=&amp;#x22;&amp;#x22;&amp;#x3E;Registration&amp;#x3C;/h1&amp;#x3E;
+        &amp;#x3C;/div&amp;#x3E;
+      &amp;#x3C;/md-toolbar&amp;#x3E;
+      &amp;#x3C;md-content class=&amp;#x22;md-padding md-cyan-theme&amp;#x22;&amp;#x3E;
+        &amp;#x3C;form name=&amp;#x22;registration&amp;#x22;&amp;#x3E;
+          &amp;#x3C;basic-info user=&amp;#x22;registrationCtrl.user&amp;#x22;&amp;#x3E;&amp;#x3C;/basic-info&amp;#x3E;
+          &amp;#x3C;div class=&amp;#x22;md-actions&amp;#x22; layout=&amp;#x22;column&amp;#x22; layout-align=&amp;#x22;center&amp;#x22;&amp;#x3E;
+            &amp;#x3C;md-button class=&amp;#x22;md-raised md-primary&amp;#x22; layout=&amp;#x22;row&amp;#x22; layout-align=&amp;#x22;center center&amp;#x22; ng-disabled=&amp;#x22;registration.$invalid&amp;#x22; ng-click=&amp;#x22;registrationCtrl.register()&amp;#x22;&amp;#x3E;
+              Registration
+            &amp;#x3C;/md-button&amp;#x3E;
+            &amp;#x3C;a
+              class=&amp;#x22;md-primary md-button md-cyan-theme&amp;#x22; ui-sref=&amp;#x22;login&amp;#x22;
+              aria-label=&amp;#x22;Already registered? Login now&amp;#x22;&amp;#x3E;Already registered? Login now&amp;#x3C;/a&amp;#x3E;
+          &amp;#x3C;/div&amp;#x3E;
+
+        &amp;#x3C;/form&amp;#x3E;
+      &amp;#x3C;/md-content&amp;#x3E;
+    &amp;#x3C;/md-card&amp;#x3E;
+  &amp;#x3C;/div&amp;#x3E;
+&amp;#x3C;/div&amp;#x3E;
+&amp;#x3C;/div&amp;#x3E;
+&lt;/code&gt;
+&lt;/pre&gt;
+&lt;p&gt;We need to link somehow the registration form with the login form, so add a registration button to login.html as the following example shows:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+&amp;#x3C;a
+class=&amp;#x22;md-primary md-button md-cyan-theme&amp;#x22; ui-sref=&amp;#x22;registration&amp;#x22;
+aria-label=&amp;#x22;Don&amp;#x27;t have an account? Create one now&amp;#x22;&amp;#x3E;Don&amp;#x27;t have an account? Create one now&amp;#x3C;/a&amp;#x3E;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id='profile'&gt;Profile&lt;/h3&gt;
+
+&lt;h4 id='step_profile'&gt;step_profile&lt;/h4&gt;
+
+&lt;p&gt;If you&amp;#8217;ve got stucked in the previous step, just switch to branch &lt;em&gt;step_profile&lt;/em&gt; and continue work from here:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+git checkout step_profile
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Complete the &lt;em&gt;profile.directive.js&lt;/em&gt; directive to load the current user:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+var loggedinUser = AccountService.getLoggedInUser();
+profileDialogCtrl.user = {};
+
+angular.copy(loggedinUser,profileDialogCtrl.user);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We also want to save the profile details, so add the following function too:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+profileDialogCtrl.save = function () {
+
+UserService.update(profileDialogCtrl.user).$promise.then(
+function(result){
+angular.copy(result,loggedinUser);
+},
+function(error){
+	console.log(error);
+}
+);
+$mdDialog.hide();
+};
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Extend the template (profile.dialog.html) to load the basic form (between md-dialog-content tags):&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+&amp;#x3C;basic-info user=&amp;#x22;profileDialogCtrl.user&amp;#x22;&amp;#x3E;&amp;#x3C;/basic-info&amp;#x3E;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;In the same template call the function that saves the profile when the user clicks the button:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+ng-click=&quot;profileDialogCtrl.save()&quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Let&amp;#8217;s upgrade our sidebar to a whole new level. To do this, inject AccountService in the &lt;em&gt;leftnav.directive.js&lt;/em&gt; and retrieve the current user:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+leftnavCtrl.user = AccountService.getLoggedInUser();
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Let&amp;#8217;s create a button on the sidenav to reach user profile (&lt;em&gt;leftnav.html&lt;/em&gt;):&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+&amp;#x3C;md-button profile-button class=&amp;#x22;md-accent&amp;#x22; layout=&amp;#x22;row&amp;#x22;&amp;#x3E;
+My Profile
+&amp;#x3C;/md-button&amp;#x3E;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We should also display the loggedin user, so paste the following code between the first md-content tags also in the &lt;em&gt;leftnav.html&lt;/em&gt; template:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+&amp;#x3C;img class=&amp;#x22;avatar&amp;#x22; ng-src=&amp;#x22;&amp;#x22;/&amp;#x3E;
+&amp;#x3C;h3 class=&amp;#x22;fullname&amp;#x22; layout=&amp;#x22;row&amp;#x22; layout-align=&amp;#x22;center center&amp;#x22;&amp;#x3E;&amp;#x3C;/h3&amp;#x3E;
+&amp;#x3C;small class=&amp;#x22;username&amp;#x22; layout=&amp;#x22;row&amp;#x22; layout-align=&amp;#x22;center center&amp;#x22;&amp;#x3E;@&amp;#x3C;/small&amp;#x3E;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Let&amp;#8217;s put the image of the user in the menu. To do this first inject AccountService in the &lt;em&gt;menu.directive.js&lt;/em&gt; and query the loggedin user:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+menuCtrl.user = AccountService.getLoggedInUser();
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Display the user avatar as a button (menu.html), that way the user can click on it and edit its profile:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+&amp;#x3C;md-button profile-button class=&amp;#x22;md-icon-button&amp;#x22; aria-label=&amp;#x22;More&amp;#x22;  ng-if=&amp;#x22;$root.loggedIn&amp;#x22;&amp;#x3E;
+&amp;#x3C;img ng-src=&amp;#x22;&amp;#x22; class=&amp;#x22;md-avatar message-avatar&amp;#x22; style=&amp;#x22;    height: 50px;
+background-color: white;&amp;#x22;/&amp;#x3E;
+&amp;#x3C;/md-button&amp;#x3E;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id='szoba_ltrehozsa'&gt;Szoba létrehozása&lt;/h3&gt;
+
+&lt;h4 id='step_create_room'&gt;step_create_room&lt;/h4&gt;
+
+&lt;p&gt;Szobákról még nem volt szó, elsőként a modellt alkossuk meg: room.model.js a room mappában.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+(function () {
+'use strict';
+
+angular
+  .module('angularChat')
+  .factory('Room', Room);
+
+/** @ngInject */
+function Room(apiUrl,$resource) {
+  return $resource(apiUrl + '/rooms/:id');
+}
+})();
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;A room-ban lehetnek user-ek is, így ennek a modelljét se hagyjuk ki! room.users.model.js:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+(function () {
+'use strict';
+
+angular
+  .module('angularChat')
+  .factory('RoomUser', RoomUser);
+
+/** @ngInject */
+function RoomUser(apiUrl,$resource) {
+  return $resource(apiUrl + '/rooms/:id/users/:userId', { id: '@_id' });
+}
+})();
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Következik a room service. Hozzuk létre a room.service.js fájlt a következő tartalommal:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+(function () {
+'use strict';
+
+angular
+  .module('angularChat')
+  .service('RoomService', RoomService);
+
+/** @ngInject */
+function RoomService($resource, apiUrl,Room, RoomUser) {
+    this.createRoom = createRoom;
+ 
+  function createRoom(room){
+    var newRoom = new Room({name : room.name});
+    return newRoom.$save();
+  }
+  }
+})();
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;A szobát létrehozó gomb direktívája a create.room.fab.directive.js-ben található. Innen hiányzik a click eseményt kezelő függvény. Egészítsük ki vele a direktívát:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+createRoomCtrl.create = function(){
+RoomService.createRoom(createRoomCtrl.newRoom).then(function(result){
+  $rootScope.toast(&quot;Room &quot;+result._id+&quot; created successfully!&quot;);
+
+  $mdDialog.hide();
+},function(result){
+  console.error(result);
+  $rootScope.toast(&quot;We couldn't create your room, sorry :(&quot;)
+});
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;template: create.room.fab.tmpl.html egészítsük ki az eseménykezelővel:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+ng-click=&quot;fabCtrl.createRoomDialog()&quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;adjunk egy tooltipet is neki:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+&amp;#x3C;md-tooltip md-direction=&amp;#x22;left&amp;#x22;&amp;#x3E;Create Room&amp;#x3C;/md-tooltip&amp;#x3E;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;create.room.dialog.tmpl.html-ben:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+&amp;#x3C;md-dialog aria-label=&amp;#x22;New Room&amp;#x22;&amp;#x3E;
+&amp;#x3C;form name=&amp;#x22;createRoomForm&amp;#x22;&amp;#x3E;
+  &amp;#x3C;md-toolbar&amp;#x3E;
+    &amp;#x3C;div class=&amp;#x22;md-toolbar-tools&amp;#x22;&amp;#x3E;
+      &amp;#x3C;h2&amp;#x3E;Create Room&amp;#x3C;/h2&amp;#x3E;
+      &amp;#x3C;span flex&amp;#x3E;&amp;#x3C;/span&amp;#x3E;
+      &amp;#x3C;md-button class=&amp;#x22;md-icon-button&amp;#x22; ng-click=&amp;#x22;createRoomCtrl.cancel()&amp;#x22;&amp;#x3E;
+        &amp;#x3C;md-icon md-svg-src=&amp;#x22;img/icons/ic_close_24px.svg&amp;#x22; aria-label=&amp;#x22;Close dialog&amp;#x22;&amp;#x3E;&amp;#x3C;/md-icon&amp;#x3E;
+      &amp;#x3C;/md-button&amp;#x3E;
+    &amp;#x3C;/div&amp;#x3E;
+  &amp;#x3C;/md-toolbar&amp;#x3E;
+  &amp;#x3C;md-dialog-content&amp;#x3E;
+     &amp;#x3C;md-content layout-padding&amp;#x3E;
+      &amp;#x3C;div layout layout-sm=&amp;#x22;column&amp;#x22;&amp;#x3E;
+        &amp;#x3C;md-input-container flex&amp;#x3E;
+          &amp;#x3C;label&amp;#x3E;Room name&amp;#x3C;/label&amp;#x3E;
+          &amp;#x3C;input ng-enter=&amp;#x22;createRoomCtrl.create()&amp;#x22; ng-model=&amp;#x22;createRoomCtrl.newRoom.name&amp;#x22; required&amp;#x3E;
+        &amp;#x3C;/md-input-container&amp;#x3E;
+      &amp;#x3C;/div&amp;#x3E;
+    &amp;#x3C;/md-content&amp;#x3E;
+  &amp;#x3C;/md-dialog-content&amp;#x3E;
+  &amp;#x3C;div class=&amp;#x22;md-actions&amp;#x22; layout=&amp;#x22;column&amp;#x22; layout-align=&amp;#x22;center&amp;#x22;&amp;#x3E;
+    &amp;#x3C;md-button class=&amp;#x22;md-primary md-raised&amp;#x22; layout=&amp;#x22;row&amp;#x22; layout-align=&amp;#x22;center center&amp;#x22; ng-click=&amp;#x22;createRoomCtrl.create()&amp;#x22;&amp;#x3E;
+      Create
+    &amp;#x3C;/md-button&amp;#x3E;
+  &amp;#x3C;/div&amp;#x3E;
+&amp;#x3C;/form&amp;#x3E;
+&amp;#x3C;/md-dialog&amp;#x3E;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id='szobk_listzsa'&gt;Szobák listázása&lt;/h3&gt;
+
+&lt;h4 id='step_list_rooms'&gt;step_list_rooms&lt;/h4&gt;
+
+&lt;p&gt;Ebben a szakaszban létrehozunk egy szobákat listázó panelt, amely a menüben lévő gombra kattintva kúszik fel az oldal alján. Lássuk!&lt;/p&gt;
+
+&lt;p&gt;Egészítsük ki a RoomService-t: * az összes szoba lekérdezésére:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+this.getRooms = getRooms;
+function getRooms() {
+    var rooms = Room.query();
+    return rooms;
+  }
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;szoba felhasználóinak lekérdezése:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;
+this.getUsers = getUsers;
+
+function getUsers(roomId) {
+return RoomUser.query({id: roomId});
+}
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Hozzunk létre a menüben egy gombot, amire felnyílik majd a szobalista: menu/menu.html&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+&amp;#x3C;md-button room-list-opener  ng-if=&amp;#x22;$root.loggedIn&amp;#x22;&amp;#x3E;
+Rooms
+&amp;#x3C;/md-button&amp;#x3E;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Ez egy sima angularmaterial-os gomb, kiegészítve egy direktívával, amit még nem írtunk meg, így tegyük meg azt is.&lt;/p&gt;
+
+&lt;p&gt;room/room.list.directive.js létrehozása:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+(function() {
+'use strict';
+
+angular
+  .module('angularChat')
+  .directive('roomListOpener', RoomListOpener);
+
+/** @ngInject */
+function RoomListOpener($mdBottomSheet) {
+  var directive = {
+    restrict: 'A',
+    link: link
+  };
+  return directive;
+
+  /** @ngInject */
+  function RoomListController(RoomService,$rootScope,$state) {
+    var roomListCtrl = this;
+   
+  }
+
+  function link(scope, element, attrs) {
+
+   }
+}
+
+})();
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;A link függvénybe tegyünk egy click eseménykezelőt:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+element.on( &quot;click&quot;, function($event) {
+	 
+});
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Az eseménykezelőben pedig használjuk az mdBottomSheet komponensét az angular materialnak:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+$mdBottomSheet.show({
+        templateUrl: 'app/room/room.list.tmpl.html',
+        controller: RoomListController,
+        controllerAs: 'roomListCtrl',
+        bindToController: true,
+        targetEvent: $event
+      });
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Itt használjuk a már definiált RoomListControllert, de nem csinál még semmit sem. Meg szeretnénk jeleníteni az összes szobát, kérjük hát le a RoomService-től:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+roomListCtrl.rooms = RoomService.getRooms();
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Már csak a room.list.tmpl.html hiányzik, hozzuk létre a következő tartalommal:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+&amp;#x3C;md-bottom-sheet class=&amp;#x22;md-list md-has-header&amp;#x22;&amp;#x3E;
+&amp;#x3C;md-subheader&amp;#x3E;Available Rooms &amp;#x3C;small&amp;#x3E;Click the room you want to open&amp;#x3C;/small&amp;#x3E;&amp;#x3C;/md-subheader&amp;#x3E;
+&amp;#x3C;md-chips ng-model=&amp;#x22;roomListCtrl.rooms&amp;#x22; readonly=&amp;#x22;true&amp;#x22;&amp;#x3E;
+  &amp;#x3C;md-chip-template&amp;#x3E;
+    &amp;#x3C;strong&amp;#x3E;&amp;#x3C;/strong&amp;#x3E;
+  &amp;#x3C;/md-chip-template&amp;#x3E;
+&amp;#x3C;/md-chips&amp;#x3E;
+&amp;#x3C;/md-bottom-sheet&amp;#x3E;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id='szoba_megnyitsa'&gt;Szoba megnyitása&lt;/h3&gt;
+
+&lt;h4 id='step_room_view'&gt;step_room_view&lt;/h4&gt;
+
+&lt;p&gt;Ebben a szakaszban a cél, hogy egy tabos elrendezést kialakítsunk a megnyitott szobáknak. Először is a room.service.js fájlt egészítsük ki egy szobát lekérő metódussal:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+this.getRoom = getRoom;
+
+function getRoom(roomId) {
+var room = Room.get({id: roomId});
+return room;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Létre kell hoznunk egy olyan service-t ami nyílvántartja a már megnyitott szobákat: opened.room.factory.js&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+(function () {
+'use strict';
+
+angular
+  .module('angularChat')
+  .factory('openedRoomsFactory', openedRoomsFactory);
+
+/** @ngInject */
+function openedRoomsFactory(RoomService,$localStorage,$rootScope) {
+  var self = this;
+
+  var roomFactoryObj = {};
+
+  return roomFactoryObj;
+}
+
+})();
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Egészítsük ki a következő függvényekkel: * Aktuálisan megnyitott szoba index:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+  roomFactoryObj.setSelectedIndex = function(newIndex){
+    $localStorage.index  = newIndex;
+  };
+
+  roomFactoryObj.getSelectedIndex = function(){
+    return $localStorage.index;
+  };
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Szoba lekérése index alapján: &lt;pre&gt;&lt;code&gt;
+roomFactoryObj.getRoomByIndex = function(index){
+  var room = _.findWhere($localStorage.rooms, { 'index': index });
+  return room;
+};
+&lt;/code&gt;&lt;/pre&gt;&lt;/p&gt;
+&lt;/li&gt;
+
+&lt;li&gt;
+&lt;p&gt;Összes megnyitott szoba lekérdezése &lt;pre&gt;&lt;code&gt;
+roomFactoryObj.getRooms = function(){
+return $localStorage.rooms;
+};
+&lt;/code&gt;&lt;/pre&gt;&lt;/p&gt;
+&lt;/li&gt;
+
+&lt;li&gt;
+&lt;p&gt;Szoba hozzáadása a már megnyitott szobákhoz: &lt;pre class='markdown-html-error' style='border: solid 3px red; background-color: pink'&gt;REXML could not parse this XML/HTML: 
+&amp;lt;pre&amp;gt;&amp;lt;code&amp;gt;
+roomFactoryObj.addRoom = function(room){
+  if(typeof $localStorage.rooms == &amp;quot;undefined&amp;quot;) {
+    $localStorage.rooms = [];
+  }&lt;/pre&gt;&lt;/p&gt;
+
+&lt;p&gt;room.index = $localStorage.rooms.length; $localStorage.index = room.index; $localStorage.rooms.push(room); $rootScope.$emit(&amp;#8220;room.added&amp;#8221;); };&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class='markdown-html-error' style='border: solid 3px red; background-color: pink'&gt;REXML could not parse this XML/HTML: 
+&amp;lt;/code&amp;gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Szoba eltávolítása a már megnyitott szobák közül: &lt;pre&gt;&lt;code&gt;
+roomFactoryObj.removeRoom = function(index){
+  $localStorage.rooms.splice(index, 1);
+};
+&lt;/code&gt;&lt;/pre&gt;&lt;/p&gt;
+&lt;/li&gt;
+
+&lt;li&gt;
+&lt;p&gt;Van-e megnyitott szoba? &lt;pre class='markdown-html-error' style='border: solid 3px red; background-color: pink'&gt;REXML could not parse this XML/HTML: 
+&amp;lt;pre&amp;gt;&amp;lt;code&amp;gt;
+roomFactoryObj.hasRoom = function(){
+  return $localStorage.rooms &amp;amp;&amp;amp; $localStorage.rooms.length&amp;gt;0;
+};
+&amp;lt;/code&amp;gt;&amp;lt;/pre&amp;gt;&lt;/pre&gt;&lt;/p&gt;
+&lt;/li&gt;
+
+&lt;li&gt;
+&lt;p&gt;Meg van-e nyitva egy szoba? &lt;pre&gt;&lt;code&gt;
+roomFactoryObj.containsRoom = function(room){
+  var result = _.findWhere($localStorage.rooms, { '_id': room._id });
+  return typeof result != &quot;undefined&quot;;
+};
+&lt;/code&gt;&lt;/pre&gt;&lt;/p&gt;
+&lt;/li&gt;
+
+&lt;li&gt;
+&lt;p&gt;A factory létrejöttekor szinkronizáljunk a korábban megnyitott szobákat a local storage-ból: &lt;pre class='markdown-html-error' style='border: solid 3px red; background-color: pink'&gt;REXML could not parse this XML/HTML: 
+&amp;lt;pre&amp;gt;&amp;lt;code&amp;gt;
+function syncRoomsFromLocalStorage(){
+  _.forEach($localStorage.rooms,function(storedRoom){
+    $localStorage.rooms[storedRoom._id] = RoomService.getRoom(storedRoom._id)
+  });
+}&lt;/pre&gt;&lt;/p&gt;
+
+&lt;p&gt;syncRoomsFromLocalStorage();&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class='markdown-html-error' style='border: solid 3px red; background-color: pink'&gt;REXML could not parse this XML/HTML: 
+&amp;lt;/code&amp;gt;&lt;/pre&gt;
+&lt;p&gt;A szoba listán ha rákattintunk egy elemre akkor szeretnénk megnyitni egy szobát. Ezzel egy új navigációhoz jutunk, így az index.route.js-ben: &lt;pre&gt;&lt;code&gt;
+.state('rooms.room', {
+url: '/:id',
+templateUrl: 'app/room/room.item.html',
+controller: 'RoomItemController',
+controllerAs: 'roomItemCtrl',
+data: {authenticated: true}
+})
+&lt;/code&gt;&lt;/pre&gt;&lt;/p&gt;
+
+&lt;p&gt;hozzuk létre az itt említett RoomItemControllert: room.item.controller.js fájl létrehozása a room mappában a következő tartalommal:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+(function () {
+'use strict';
+
+angular
+  .module('angularChat')
+  .controller(&quot;RoomItemController&quot;, RoomItemController);
+
+/** @ngInject */
+function RoomItemController($scope, $timeout, $mdBottomSheet, toastr, RoomService, $log, $rootScope, $state, openedRoomsFactory, apiUrl, socketFactory, AccountService, allUsersFactory) {
+  var roomItemCtrl = this;
+  var roomId = $state.params.id;
+
+  roomItemCtrl.users = [];
+  roomItemCtrl.allusers = allUsersFactory.users;
+
+  RoomService.getRoom(roomId).$promise.then(function (room) {
+    _.forEach(room.users, function (userId) {
+      if (!isUserAlreadyAdded(userId)) {
+        roomItemCtrl.users.push(allUsersFactory.users[userId]);
+      }
+    });
+
+    roomItemCtrl.room = room;
+  });
+
+  function isUserAlreadyAdded(userId){
+    var userfound = _.findWhere(roomItemCtrl.users, {'_id': userId});
+    return typeof userfound != &quot;undefined&quot;;
+  }
+}
+})();
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Ne feledkezzünk meg a kedvenc socket.io-s eseményekre feliratkozni a kontrollerben! :)&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+socketFactory.emit(&quot;subscribe&quot;, {room: roomId, user: AccountService.getLoggedInUser()});
+
+  socketFactory.on(&quot;user.joined&quot;,function (user) {
+      if (!isUserAlreadyAdded(user._id)) {
+        roomItemCtrl.users.push(user);
+      }
+  });
+
+  socketFactory.on(&quot;user.left&quot;,function (user) {
+      _.remove(roomItemCtrl.users, {
+        _id: user._id
+      });
+  });
+
+  $scope.$on(&quot;$destroy&quot;, function () {
+    socketFactory.emit(&quot;unsubscribe&quot;, {room: roomId, user: AccountService.getLoggedInUser()});
+  });
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Készítsük el a szoba megjelenítésének alapjait. room.item.html létrehozása:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+&amp;#x3C;div layout=&amp;#x22;row&amp;#x22; layout-wrap&amp;#x3E;
+&amp;#x3C;md-content layout=&amp;#x22;column&amp;#x22; flex=&amp;#x22;80&amp;#x22; flex-sm=&amp;#x22;100&amp;#x22;&amp;#x3E;
+  &amp;#x3C;md-content style=&amp;#x22;height: 60vh;&amp;#x22;&amp;#x3E;
+  
+&amp;#x3C;/md-content&amp;#x3E;
+  &amp;#x3C;md-content layout-padding&amp;#x3E;
+
+  &amp;#x3C;/md-content&amp;#x3E;
+&amp;#x3C;/md-content&amp;#x3E;
+&amp;#x3C;md-content class=&amp;#x22;side-nav room-users&amp;#x22; hide-sm layout=&amp;#x22;column&amp;#x22; flex=&amp;#x22;18&amp;#x22;&amp;#x3E;
+  &amp;#x3C;md-list layout-fill&amp;#x3E;
+    &amp;#x3C;md-subheader class=&amp;#x22;md-accent&amp;#x22;&amp;#x3E;Available users&amp;#x3C;/md-subheader&amp;#x3E;
+    &amp;#x3C;md-list-item class=&amp;#x22;md-2-line contact-item selected&amp;#x22; ng-repeat=&amp;#x22;(index, contact) in roomItemCtrl.users&amp;#x22;&amp;#x3E;
+      &amp;#x3C;img ng-src=&amp;#x27;&amp;#x27; class=&amp;#x22;md-avatar&amp;#x22; alt=&amp;#x22;&amp;#x22;/&amp;#x3E;
+      &amp;#x3C;div class=&amp;#x22;md-list-item-text compact&amp;#x22;&amp;#x3E;
+        &amp;#x3C;h3&amp;#x3E;&amp;#x3C;/h3&amp;#x3E;
+        &amp;#x3C;p&amp;#x3E;@&amp;#x3C;/p&amp;#x3E;
+      &amp;#x3C;/div&amp;#x3E;
+      &amp;#x3C;md-divider&amp;#x3E;&amp;#x3C;/md-divider&amp;#x3E;
+    &amp;#x3C;/md-list-item&amp;#x3E;
+  &amp;#x3C;/md-list&amp;#x3E;
+&amp;#x3C;/md-content&amp;#x3E;
+&amp;#x3C;/div&amp;#x3E;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;room.list.directive.js fájlban vegyük fel az openedRoomsFactory függőséget és definiáljuk a szoba megnyitásáárét felelős függvényt:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+  roomListCtrl.openRoom = function(index,room){
+if(!openedRoomsFactory.containsRoom(room)){
+  openedRoomsFactory.addRoom(room);
+  $state.go(&quot;rooms.room&quot;,{id: room._id},{reload: false});
+}else{
+  $rootScope.toast(&quot;You've already opened this room!&quot;);
+}
+};
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;room.list.tmpl.html fájlban eseménykezelő hozzáadása:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+ng-click=&quot;roomListCtrl.openRoom($index,$chip)&quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;A tabos megjelenítéshez hozzunk létre egy RoomsController-t!&lt;/p&gt;
+
+&lt;p&gt;room.tabs.controller.js:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+(function () {
+'use strict';
+
+angular
+  .module('angularChat')
+  .controller('RoomsController', RoomsController);
+
+/** @ngInject */
+function RoomsController($scope, $timeout, $mdBottomSheet, toastr, RoomService, $log,$rootScope,$state,openedRoomsFactory) {
+  var roomsCtrl = this;
+ 
+   }
+})();
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Olvassuk be ha már volt elmentett szoba:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+syncFromOpenedRoomsFactory();
+
+function syncFromOpenedRoomsFactory(){
+    roomsCtrl.selectedIndex = openedRoomsFactory.getSelectedIndex();
+    roomsCtrl.rooms = openedRoomsFactory.getRooms();
+  }
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Ha új szobát nyitunk meg, szinkronizáljuk a mezőket:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+$rootScope.$on(&quot;room.added&quot;,syncFromOpenedRoomsFactory);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Tab bezárásakor szoba eltávolítása:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+roomsCtrl.removeRoom = function (index) {
+    openedRoomsFactory.removeRoom(index);
+  };
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Tabokat ha kattintgatjuk, akkor frissítsük az indexet az openedRoomsFactory-ban is! A routingot is állítsuk be ennek megfelelően!&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+$scope.$watch(&quot;roomsCtrl.selectedIndex&quot;,function(newIndex){
+    openedRoomsFactory.setSelectedIndex(newIndex);
+    if(openedRoomsFactory.hasRoom()){
+      $state.go(&quot;rooms.room&quot;,{id: openedRoomsFactory.getRoomByIndex(newIndex)._id});
+    }
+  });
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Hozzuk létre a tabos elrendezés nézetét: room.tabs.tmpl.html a következő tartalommal:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+&amp;#x3C;md-content flex ng-if=&amp;#x22;roomsCtrl.rooms.length &amp;#x3E; 0&amp;#x22;&amp;#x3E;
+&amp;#x3C;md-subheader&amp;#x3E;Opened Rooms right now&amp;#x3C;/md-subheader&amp;#x3E;
+&amp;#x3C;md-tabs md-dynamic-height md-selected=&amp;#x22;roomsCtrl.selectedIndex&amp;#x22; md-border-bottom md-autoselect&amp;#x3E;
+  &amp;#x3C;md-tab ng-repeat=&amp;#x22;room in roomsCtrl.rooms&amp;#x22;&amp;#x3E;
+    &amp;#x3C;md-tab-label&amp;#x3E; &amp;#x3C;a ng-click=&amp;#x22;roomsCtrl.removeRoom($index,room)&amp;#x22;&amp;#x3E;
+      &amp;#x3C;md-icon md-svg-icon=&amp;#x22;navigation:close&amp;#x22;&amp;#x3E;&amp;#x3C;/md-icon&amp;#x3E;
+    &amp;#x3C;/a&amp;#x3E;
+    &amp;#x3C;/md-tab-label&amp;#x3E;
+    &amp;#x3C;div ui-view flex&amp;#x3E;&amp;#x3C;/div&amp;#x3E;
+&amp;#x3C;/md-tabs&amp;#x3E;
+&amp;#x3C;/md-content&amp;#x3E;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Ne feledkezzünk meg kilépéskor leiratkoztatni a szobáról a usert. Ehhez egészítsük ki az account.service.js logout függvényét és vegyük fel az openedRoomsFactory és a socketFactory függőségeket is:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+var openedRooms = openedRoomsFactory.getRooms();
+//logout from rooms
+_.forEach(openedRooms, function (room) {
+socketFactory.emit(&quot;unsubscribe&quot;, {room: room._id, user: getLoggedInUser()});
+});
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;töröljük a megnyitott szobákat is:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+delete $localStorage.rooms;
+delete $localStorage.index;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;A routingot is egészítsük ki az index.routes.js fájlban. Itt már létezik egy &amp;#8220;rooms&amp;#8221; nevű állapot, ezt egészítsük ki, hogy a következőképpen nézzen ki:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+.state('rooms', {
+  url: '/rooms',
+  templateUrl: 'app/room/room.tabs.tmpl.html',
+  controller: 'RoomsController',
+  controllerAs: 'roomsCtrl',
+  data: {authenticated: true}
+});
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;A create.room.fab.directive.js-hez adjuk hozzá az openedRoomsFactory függőséget valamint atdjuk meg azt is, hogy ha új szobát hozunk létre, az egyből bekerüljön a megnyitott szobák közé és meg is nyíljon:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+openedRoomsFactory.addRoom(result);
+$state.go(&quot;rooms.room&quot;,{id: result._id});
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id='zenetek_kezelse'&gt;Üzenetek kezelése&lt;/h3&gt;
+
+&lt;h4 id='step_messages'&gt;step_messages&lt;/h4&gt;
+
+&lt;p&gt;Az üzenetek aspektus számára hozzuk létre a message nevű mappát. Üzenet modell: message.model.js fájl létrehozása message mappában&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+(function () {
+'use strict';
+
+angular.module('angularChat')
+.factory('Message', Message);
+
+/** @ngInject */
+function Message(apiUrl,$resource) {
+  return $resource(apiUrl + '/rooms/:id/messages/:messageId', 
+{ id: '@_id' });
+}
+
+})();
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Hozzunk létre egy service-t, amely az üzenetek kezeléséért lesz felelős! message.service.js message mappában&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+(function() {
+'use strict';
+
+angular
+  .module('angularChat')
+  .service('MessageService',MessageService);
+
+/** @ngInject */
+function MessageService($resource,apiUrl,Message,Room,AccountService) { 
+}
+})();
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;A Service-ben két függvényt kell megírnunk.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;A szoba üzeneteit lekérő függvény &lt;pre&gt;&lt;code&gt;
+function getRoomMessages(roomId){
+return Message.query({id: roomId});
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/p&gt;
+&lt;/li&gt;
+
+&lt;li&gt;
+&lt;p&gt;Új üzenet létrehozása a szobában &lt;pre&gt;&lt;code&gt;
+function createRoomMessage(roomId, message){
+var newMessage = new Message();
+newMessage.text = message;
+newMessage.user = AccountService.getLoggedInUser();
+newMessage.$save({id: roomId});
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;A két függvény publikussá tételéért vegyük fel a Service elején a következő utasításokat:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+this.getRoomMessages = getRoomMessages;
+this.createRoomMessage = createRoomMessage;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Hívjuk meg ezt a két függvényt az alkalmazás megfelelő pontjain!&lt;/p&gt;
+
+&lt;p&gt;room.item.controller.js fájlban:&lt;/p&gt;
+
+&lt;p&gt;A service használatához adjuk hozzá a függőségekhez! Vegyük fel a két változót:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+roomItemCtrl.newMessage = &quot;&quot;;
+roomItemCtrl.messages = MessageService.getRoomMessages(roomId);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Új üzenet létrehozása:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+roomItemCtrl.createMessage = function () {
+MessageService.createRoomMessage(roomId, roomItemCtrl.newMessage);
+roomItemCtrl.newMessage = &quot;&quot;;
+};
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Sockethez tartozó rész:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+socketFactory.on(&quot;new message&quot;,function (message) {
+roomItemCtrl.messages.push(message);
+});
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Nyissuk meg a room/room.item.html template-et! Készítsünk egy angular material-os listát, melyben a roomItemCtrl.messages változót jelenítjük meg:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+&amp;#x3C;md-list scroll=&amp;#x22;roomItemCtrl.messages&amp;#x22;&amp;#x3E;
+&amp;#x3C;md-subheader class=&amp;#x22;md-info&amp;#x22;&amp;#x3E;Messages in room &amp;#x3C;/md-subheader&amp;#x3E;
+&amp;#x3C;message ng-repeat=&amp;#x22;message in roomItemCtrl.messages&amp;#x22; message=&amp;#x22;message&amp;#x22;
+         author=&amp;#x22;roomItemCtrl.allusers[message.authorId]&amp;#x22;
+         ng-class=&amp;#x22;{ &amp;#x27;repeated-author&amp;#x27; : $index&amp;#x3E;0 &amp;#x26;&amp;#x26; message.authorId == roomItemCtrl.messages[$index-1].authorId}&amp;#x22;&amp;#x3E;&amp;#x3C;/message&amp;#x3E;
+&amp;#x3C;/md-list&amp;#x3E;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Megjegyzés: • az ng-class rész az üzenetek megjelenítésének testreszabására van.&lt;/p&gt;
+
+&lt;p&gt;Új üzenet létrehozására:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+&amp;#x3C;md-input-container class=&amp;#x22;md-accent&amp;#x22;&amp;#x3E;
+&amp;#x3C;label&amp;#x3E;New Message&amp;#x3C;/label&amp;#x3E;
+&amp;#x3C;input ng-enter=&amp;#x22;roomItemCtrl.createMessage()&amp;#x22; ng-model=&amp;#x22;roomItemCtrl.newMessage&amp;#x22; md-maxlength=&amp;#x22;350&amp;#x22;/&amp;#x3E;
+&amp;#x3C;/md-input-container&amp;#x3E;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Az előzőekben használtuk a message direktívát, de az sehol sem létezik, ezt sajnos nekünk kell megírnunk :) A message mappában hozzuk létre a message.directive.js fájlt:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+(function() {
+'use strict';
+
+angular
+  .module('angularChat')
+  .directive('message', message);
+
+/** @ngInject */
+function message() {
+  var directive = {
+    restrict: 'E',
+    templateUrl: 'app/message/message.item.tmpl.html',
+    controller: MessageController,
+    controllerAs: 'messageCtrl',
+    bindToController: true,
+    scope:{
+      message: &quot;=&quot;,
+      author: &quot;=&quot;
+    }
+  };
+
+  return directive;
+
+  /** @ngInject */
+  function MessageController($mdDialog){
+    var messageCtrl = this;
+  }
+}
+
+})();
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Túl sok mindent nem csinál, megjeleníti a megadott template-et, ami még nem létezik. Hozzuk létre a hiányzó message.item.tmpl.html fájlt a következő tartalommal:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+&amp;#x3C;md-list-item class=&amp;#x22;contact-item md-2-line selected&amp;#x22;&amp;#x3E;
+&amp;#x3C;img ng-src=&amp;#x22;&amp;#x22; class=&amp;#x22;md-avatar message-avatar&amp;#x22;/&amp;#x3E;
+&amp;#x3C;div class=&amp;#x22;md-list-item-text compact&amp;#x22;&amp;#x3E;
+  &amp;#x3C;p style=&amp;#x22;text-align: right;&amp;#x22;&amp;#x3E;&amp;#x3C;small&amp;#x3E;&amp;#x3C;strong&amp;#x3E;&amp;#x3C;/strong&amp;#x3E;, &amp;#x3C;/small&amp;#x3E;&amp;#x3C;/p&amp;#x3E;
+  &amp;#x3C;div class=&amp;#x22;message-content&amp;#x22;&amp;#x3E;&amp;#x3C;/div&amp;#x3E;
+&amp;#x3C;/div&amp;#x3E;
+&amp;#x3C;/md-list-item&amp;#x3E;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Az md-list direktíva elemeit akarjuk megadni, így az md-list-item kötelező.&lt;/p&gt;</content>
+ </entry>
+ 
+ <entry>
+   <title>Openlayers battles - Is this polygon convex or not?</title>
+   <link href="http://annatomka.github.io/2015/08/16/openlayers-battles/"/>
+   <updated>2015-08-16T00:00:00+02:00</updated>
+   <id>http://annatomka.github.io/2015/08/16/openlayers-battles</id>
+   <content type="html">&lt;div class='message'&gt;
+Once upon a time there was a request from the customer to be able to draw polygons on a map. Later there were more and more feature requests to transfom this polygon editor to a swiss army knife. One of them was to prevent users to draw concave polygons on the map.
+&lt;/div&gt;
+&lt;p&gt;This would be pretty easy - I thought - if it were only a wonderful Openlayers function e.g &lt;code&gt;polygon.isConvex()&lt;/code&gt;. But it wasn&amp;#8217;t, or at least I could find it in version 2.13.1. I was searching the internet, trying to find the simplest solution, because I was sure there is a more elegant and shorter solution than hacking with angles.&lt;br /&gt; Finally &lt;b&gt;StackOverflow&lt;/b&gt; came to my help (as always :). In &lt;a href='http://stackoverflow.com/questions/471962/how-do-determine-if-a-polygon-is-complex-convex-nonconvex'&gt;this thread&lt;/a&gt; I found the most suitable algorithm for my need.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;div&gt;
+A polygon is a set of points in a list where the consecutive points form the boundary. It is much easier to figure out whether a polygon is convex or not (and you don't have to calculate any angles, either):&lt;/div&gt;
+&lt;div&gt;
+For each consecutive pair of edges of the polygon (each triplet of points), compute the z-component of the cross product of the vectors defined by the edges pointing towards the points in increasing order. Take the cross product of these vectors:&lt;/div&gt;
+&lt;pre&gt;&lt;code&gt; given p[k], p[k+1], p[k+2] each with coordinates x, y:
+ dx1 = x[k+1]-x[k]
+ dy1 = y[k+1]-y[k]
+ dx2 = x[k+2]-x[k+1]
+ dy2 = y[k+2]-y[k+1]
+ zcrossproduct = dx1*dy2 - dy1*dx2
+&lt;/code&gt;&lt;/pre&gt;
+&lt;div&gt;
+The polygon is convex if the z-components of the cross products are either all positive or all negative. Otherwise the polygon is nonconvex.&lt;/div&gt;
+&lt;div&gt;
+If there are N points, make sure you calculate N cross products, e.g. be sure to use the triplets (p[N-2],p[N-1],p[0]) and (p[N-1],p[0],p[1]).&lt;/div&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;You can checkout my Javascript implementation of this algorithm &lt;a href='https://gist.github.com/annatomka/82715127b74473859054'&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;a style='margin-left: auto; margin-right: auto;'&gt;&lt;img border='0' src='http://1.bp.blogspot.com/-wAR9htveRgk/VdB0wUYMt8I/AAAAAAAAIDI/MiROVlD0zt0/s1600/geofence_invalid_concave2.png' /&gt;&lt;/a&gt;
+&lt;p&gt;Openlayers concave shape example&lt;/p&gt;</content>
+ </entry>
+ 
+ <entry>
+   <title>Batman vs Superman - AngularJS 2 example with Firebase</title>
+   <link href="http://annatomka.github.io/2015/08/16/angularjs-2-example/"/>
+   <updated>2015-08-16T00:00:00+02:00</updated>
+   <id>http://annatomka.github.io/2015/08/16/angularjs-2-example</id>
+   <content type="html">&lt;div class='message'&gt;
+Lately I had the opportunity to perform on Google IO 2015 Extended here in Hungary. My topic was AngularJS 2.0, so I made a simple application to present its basic features.&lt;/div&gt;
+&lt;p&gt;You can checkout the demo application &lt;a href='https://batmanvsuperman.firebaseapp.com/'&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;img border='0' src='https://pbs.twimg.com/media/CJeYAzkUkAAFfvN.png:large' style='width: 100%' width='400' /&gt;
+&lt;p&gt;Code of the application is available &lt;a href='https://github.com/annatomka/angular2-superhero-demo'&gt;here&lt;/a&gt;. If you have any comments or improvement ideas, feel free to share with me!&lt;/p&gt;</content>
+ </entry>
+ 
+
+</feed>
