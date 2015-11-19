@@ -33,23 +33,23 @@ git clone https://github.com/annatomka/angular-chat.git
 
 ### Download as zip
 If you don't want / can't use Git, you can download the source from the following url:
-```javascript
+{% highlight js %}
 https://github.com/annatomka/angular-chat/archive/step_registration.zip
-```
+{% endhighlight %}
 ### Registration
 
 We have a login form as a starting form, but unfortunately there's no user we could log in to the chat. For this purpose let's create the registration form in this section. Extend index.routes.js with the following route:
-```javascript
+{% highlight js %}
 .state('registration', {
 url: '/registration',
 templateUrl: 'app/registration/registration.html',
 controller: 'RegistrationController',
 controllerAs: 'registrationCtrl'
 })
-```
+{% endhighlight %}
 
 As you can see from the code above we need a template and a controller too... Create folder *registration* and place registration.controller.js here with the following content:
-```language-js
+{% highlight js %}
 (function () {
 'use strict';
 
@@ -74,10 +74,10 @@ function RegistrationController($rootScope, $scope, UserService, User, AccountSe
   }
 }
 })();
-```
+{% endhighlight %}
 
 Add registration.html with the following HTML:
-```language-html
+{% highlight html %}
 <div class="registration-frame" ui-view="" flex="" layout="row">
 <div layout="row" flex="" layout-padding="" layout-fill="" layout-align="center center" class="ng-scope">
   <div flex="40" flex-lg="50" flex-md="70" flex-sm="100">
@@ -106,37 +106,37 @@ Add registration.html with the following HTML:
   </div>
 </div>
 </div>
-```
+{% endhighlight %}
 
 We need to link somehow the registration form with the login form, so add a registration button to login.html as the following example shows:
 
-```language-html
+{% highlight html %}
 <a
 class="md-primary md-button md-cyan-theme" ui-sref="registration"
 aria-label="Don't have an account? Create one now">Don't have an account? Create one now</a>
-```
+{% endhighlight %}
 
 ### Profile
 
 #### step_profile
 If you've got stucked in the previous step, just switch to branch *step_profile* and continue work from here:
 
-```language-js
+{% highlight js %}
 git checkout step_profile
-```
+{% endhighlight %}
 
 Complete the *profile.directive.js* directive to load the current user:   egyszerűbb
 
-```language-js
+{% highlight js %}
 var loggedinUser = AccountService.getLoggedInUser();
 profileDialogCtrl.user = {};
 
 angular.copy(loggedinUser,profileDialogCtrl.user);
-```
+{% endhighlight %}
 
 We also want to save the profile details, so add the following function too:
 
-```language-js
+{% highlight js %}
 profileDialogCtrl.save = function () {
 
 UserService.update(profileDialogCtrl.user).$promise.then(
@@ -149,62 +149,62 @@ function(error){
 );
 $mdDialog.hide();
 };
-```
+{% endhighlight %}
 
 Extend the template (profile.dialog.html) to load the basic form (between md-dialog-content tags):
 
-```language-html
+{% highlight html %}
 <basic-info user="profileDialogCtrl.user"></basic-info>
-```
+{% endhighlight %}
 
 In the same template call the function that saves the profile when the user clicks the button:
 
-```language-js
+{% highlight js %}
 ng-click="profileDialogCtrl.save()"
-```
+{% endhighlight %}
 
 Let's upgrade our sidebar to a whole new level. To do this, inject AccountService in the *leftnav.directive.js* and retrieve the current user:
 
-```language-js
+{% highlight js %}
 leftnavCtrl.user = AccountService.getLoggedInUser();
-```
+{% endhighlight %}
 
 Let's create a button on the sidenav to reach user profile (*leftnav.html*):
 
-```language-html
+{% highlight html %}
 <md-button profile-button class="md-accent" layout="row">
 My Profile
 </md-button>
-```
+{% endhighlight %}
 
 We should also display the loggedin user, so paste the following code between the first md-content tags also in the *leftnav.html* template:
 
-```language-html
+{% highlight html %}
 <img class="avatar" ng-src="{{ leftnavCtrl.user.imageUrl }}"/>
 <h3 class="fullname" layout="row" layout-align="center center">{{ leftnavCtrl.user  | fullname }}</h3>
 <small class="username" layout="row" layout-align="center center">@{{ leftnavCtrl.user.username}}</small>
-```
+{% endhighlight %}
 
 Let's put the image of the user in the menu. To do this first inject AccountService in the *menu.directive.js* and query the loggedin user:
 
-```language-js
+{% highlight js %}
 menuCtrl.user = AccountService.getLoggedInUser();
-```
+{% endhighlight %}
 
 Display the user avatar as a button (menu.html), that way the user can click on it and edit its profile:
 
-```language-html
+{% highlight html %}
 <md-button profile-button class="md-icon-button" aria-label="More"  ng-if="$root.loggedIn">
 <img ng-src="{{ menuCtrl.user.imageUrl }}" class="md-avatar message-avatar" style="    height: 50px;
 background-color: white;"/>
 </md-button>
-```
+{% endhighlight %}
 
 ### Create room
 
 There has been no word about rooms yet, so first let's create the room model as room.model.js file in the room directory:
 
-```language-js
+{% highlight js %}
 (function () {
 'use strict';
 
@@ -217,11 +217,11 @@ function Room(apiUrl,$resource) {
   return $resource(apiUrl + '/rooms/:id');
 }
 })();
-```
+{% endhighlight %}
 
 Don't forget about the users of a room, so let's create this model too (room.users.model.js):
 
-```language-js
+{% highlight js %}
 (function () {
 'use strict';
 
@@ -234,11 +234,11 @@ function RoomUser(apiUrl,$resource) {
   return $resource(apiUrl + '/rooms/:id/users/:userId', { id: '@_id' });
 }
 })();
-```
+{% endhighlight %}
 
 Next we have to deal with the room servie. Create room.service.js file with the following content:
 
-```language-js
+{% highlight js %}
 (function () {
 'use strict';
 
@@ -256,11 +256,11 @@ function RoomService($resource, apiUrl,Room, RoomUser) {
   }
   }
 })();
-```
+{% endhighlight %}
 
 The room creator button directive is in the create.room.fab.directive.js, but the event handler method is missing. Let's implement this function:
 
-```language-js
+{% highlight js %}
 createRoomCtrl.create = function(){
 RoomService.createRoom(createRoomCtrl.newRoom).then(function(result){
   $rootScope.toast("Room "+result._id+" created successfully!");
@@ -271,23 +271,23 @@ RoomService.createRoom(createRoomCtrl.newRoom).then(function(result){
   $rootScope.toast("We couldn't create your room, sorry :(")
 });
 }
-```
+{% endhighlight %}
 
 We need to call this method  in the create.room.fab.tmpl.html template:
 
-```language-js
+{% highlight js %}
 ng-click="fabCtrl.createRoomDialog()"
-```
+{% endhighlight %}
 
 Add a tooltip too:
 
-```language-html
+{% highlight html %}
 <md-tooltip md-direction="left">Create Room</md-tooltip>
-```
+{% endhighlight %}
 
 And finally compose the create room dialog template too (create.room.dialog.tmpl.html):
 
-```language-html
+{% highlight html %}
 <md-dialog aria-label="New Room">
 <form name="createRoomForm">
   <md-toolbar>
@@ -316,7 +316,7 @@ And finally compose the create room dialog template too (create.room.dialog.tmpl
   </div>
 </form>
 </md-dialog>
-```
+{% endhighlight %}
 
 
 ### List rooms
@@ -326,37 +326,37 @@ In this section we will create a panel that lists all available rooms. This pane
 Add the following features to the RoomService:
 
 * Get all rooms:
-```language-js
+{% highlight js %}
 this.getRooms = getRooms;
 function getRooms() {
     var rooms = Room.query();
     return rooms;
   }
-```
+{% endhighlight %}
 
 * Get users of a room given with *roomId* :
 
-```language-js
+{% highlight js %}
 this.getUsers = getUsers;
 
 function getUsers(roomId) {
 return RoomUser.query({id: roomId});
 }
 
-```
+{% endhighlight %}
 
 
 Now we create a button in the menu (menu/menu.html) that will open the room list on click:
 
-```language-html
+{% highlight html %}
 <md-button room-list-opener  ng-if="$root.loggedIn">
 Rooms
 </md-button>
-```
+{% endhighlight %}
 
 This is a plain old Angular Material button with a little bit of directive (*room-list-opener*) on top of it. Wait, we haven't written this directive yet, so do it now (room/room.list.directive.js):
 
-```language-js
+{% highlight js %}
 (function() {
 'use strict';
 
@@ -384,20 +384,20 @@ function RoomListOpener($mdBottomSheet) {
 }
 
 })();
-```
+{% endhighlight %}
 
 
 We need a click event handler in the directive's link function:
 
-```language-js
+{% highlight js %}
 element.on( "click", function($event) {
 
 });
-```
+{% endhighlight %}
 
 In the event handler let's use Angular Material' mdBottomSheet component:
 
-```language-js
+{% highlight js %}
 $mdBottomSheet.show({
         templateUrl: 'app/room/room.list.tmpl.html',
         controller: RoomListController,
@@ -405,17 +405,17 @@ $mdBottomSheet.show({
         bindToController: true,
         targetEvent: $event
       });
-```
+{% endhighlight %}
 
 Here we can see the previously defined RoomListController listed as controller but it doesn't do anything special yet. We want to display all rooms, so we need to query them from the RoomService
 
-```language-js
+{% highlight js %}
 roomListCtrl.rooms = RoomService.getRooms();
-```
+{% endhighlight %}
 
 The template is missing though, so add a room.list.tmpl.html file with the following content:
 
-```language-html
+{% highlight html %}
 <md-bottom-sheet class="md-list md-has-header">
 <md-subheader>Available Rooms <small>Click the room you want to open</small></md-subheader>
 <md-chips ng-model="roomListCtrl.rooms" readonly="true">
@@ -424,7 +424,7 @@ The template is missing though, so add a room.list.tmpl.html file with the follo
   </md-chip-template>
 </md-chips>
 </md-bottom-sheet>
-```
+{% endhighlight %}
 
 ### Open room
 
@@ -432,18 +432,18 @@ In this section we will create a tab layout for the opened rooms.
 
 First things first, add a *getRoom* function to the *room.service.js* file:
 
-```language-js
+{% highlight js %}
 this.getRoom = getRoom;
 
 function getRoom(roomId) {
 var room = Room.get({id: roomId});
 return room;
 }
-```
+{% endhighlight %}
 
 We also need a service that can keep tracks of opened rooms (*opened.room.factory.js*):
 
-```language-js
+{% highlight js %}
 (function () {
 'use strict';
 
@@ -461,13 +461,13 @@ function openedRoomsFactory(RoomService,$localStorage,$rootScope) {
 }
 
 })();
-```
+{% endhighlight %}
 
 Add the following functions to the opened.rooms.factory.js:
 
 * Index of currently selected room:
 
-```language-js
+{% highlight js %}
   roomFactoryObj.setSelectedIndex = function(newIndex){
     $localStorage.index  = newIndex;
   };
@@ -475,25 +475,25 @@ Add the following functions to the opened.rooms.factory.js:
   roomFactoryObj.getSelectedIndex = function(){
     return $localStorage.index;
   };
-```
+{% endhighlight %}
 
 * Get room by index:
-```language-js
+{% highlight js %}
   roomFactoryObj.getRoomByIndex = function(index){
     var room = _.findWhere($localStorage.rooms, { 'index': index });
     return room;
   };
-```
+{% endhighlight %}
 
 * Get all opened room:
-```language-js
+{% highlight js %}
  roomFactoryObj.getRooms = function(){
  return $localStorage.rooms;
  };
-```
+{% endhighlight %}
 
 * Add room to opened rooms:
-```language-js
+{% highlight js %}
   roomFactoryObj.addRoom = function(room){
     if(typeof $localStorage.rooms == "undefined") {
       $localStorage.rooms = [];
@@ -504,32 +504,32 @@ Add the following functions to the opened.rooms.factory.js:
     $localStorage.rooms.push(room);
     $rootScope.$emit("room.added");
   };
-```
+{% endhighlight %}
 
 * Remove room from the opened rooms:
-```language-js
+{% highlight js %}
 roomFactoryObj.removeRoom = function(index){
     $localStorage.rooms.splice(index, 1);
   };
-```
+{% endhighlight %}
 
 * Is there any opened room?
-```language-js
+{% highlight js %}
 roomFactoryObj.hasRoom = function(){
     return $localStorage.rooms && $localStorage.rooms.length>0;
   };
-```
+{% endhighlight %}
 
 * Is the room opened?
-```language-js
+{% highlight js %}
  roomFactoryObj.containsRoom = function(room){
     var result = _.findWhere($localStorage.rooms, { '_id': room._id });
     return typeof result != "undefined";
   };
-```
+{% endhighlight %}
 
 * Synchronize previously opened rooms from local storage when the factory is created:
-```language-js
+{% highlight js %}
 function syncRoomsFromLocalStorage(){
     _.forEach($localStorage.rooms,function(storedRoom){
       $localStorage.rooms[storedRoom._id] = RoomService.getRoom(storedRoom._id)
@@ -537,11 +537,11 @@ function syncRoomsFromLocalStorage(){
   }
 
   syncRoomsFromLocalStorage();
-```
+{% endhighlight %}
 
 When you click a room in the list, it would be awesome to actually open the selected room. That means a new navigation aka state in the index.route.js file:
 
-```language-js
+{% highlight js %}
 .state('rooms.room', {
 url: '/:id',
 templateUrl: 'app/room/room.item.html',
@@ -549,11 +549,11 @@ controller: 'RoomItemController',
 controllerAs: 'roomItemCtrl',
 data: {authenticated: true}
 })
-```
+{% endhighlight %}
 
 As you can see we also need a RoomItemController for this state, so create room.item.controller.js file in the room directory with the following content:
 
-```language-js
+{% highlight js %}
 (function () {
 'use strict';
 
@@ -585,11 +585,11 @@ function RoomItemController($scope, $timeout, $mdBottomSheet, toastr, RoomServic
   }
 }
 })();
-```
+{% endhighlight %}
 
 Don't forget to subscribe on your favourite socket.io events in the controller:
 
-```language-js
+{% highlight js %}
 socketFactory.emit("subscribe", {room: roomId, user: AccountService.getLoggedInUser()});
 
   socketFactory.on("user.joined",function (user) {
@@ -607,11 +607,11 @@ socketFactory.emit("subscribe", {room: roomId, user: AccountService.getLoggedInU
   $scope.$on("$destroy", function () {
     socketFactory.emit("unsubscribe", {room: roomId, user: AccountService.getLoggedInUser()});
   });
-```
+{% endhighlight %}
 
 Next create the basic room view in room.item.html file:
 
-```language-html
+{% highlight html %}
 <div layout="row" layout-wrap>
 <md-content layout="column" flex="80" flex-sm="100">
   <md-content style="height: 60vh;">
@@ -635,11 +635,11 @@ Next create the basic room view in room.item.html file:
   </md-list>
 </md-content>
 </div>
-```
+{% endhighlight %}
 
 Declare the *openedRoomsFactory* dependency in room.list.directive.js file, and implement the function responsible for opening a room:
 
-```language-js
+{% highlight js %}
   roomListCtrl.openRoom = function(index,room){
 if(!openedRoomsFactory.containsRoom(room)){
   openedRoomsFactory.addRoom(room);
@@ -648,19 +648,19 @@ if(!openedRoomsFactory.containsRoom(room)){
   $rootScope.toast("You've already opened this room!");
 }
 };
-```
+{% endhighlight %}
 
 Add an event handler to room.list.tmpl.html:
 
-```language-js
+{% highlight js %}
 ng-click="roomListCtrl.openRoom($index,$chip)"
-```
+{% endhighlight %}
 
 For our tab layout we need to create the RoomsController too (room.tabs.controller.js):
 
 room.tabs.controller.js:
 
-```language-js
+{% highlight js %}
 (function () {
 'use strict';
 
@@ -674,47 +674,47 @@ function RoomsController($scope, $timeout, $mdBottomSheet, toastr, RoomService, 
 
    }
 })();
-```
+{% endhighlight %}
 
 In the controller we need to synchronize the opened rooms:
 
-```language-js
+{% highlight js %}
 syncFromOpenedRoomsFactory();
 
 function syncFromOpenedRoomsFactory(){
     roomsCtrl.selectedIndex = openedRoomsFactory.getSelectedIndex();
     roomsCtrl.rooms = openedRoomsFactory.getRooms();
   }
-```
+{% endhighlight %}
 
 You should call this method when you receive a "room.added" event:
 
-```language-js
+{% highlight js %}
 $rootScope.$on("room.added",syncFromOpenedRoomsFactory);
-```
+{% endhighlight %}
 
 When you close a tab, you have to remove the room from the factory:
 
-```language-js
+{% highlight js %}
 roomsCtrl.removeRoom = function (index) {
     openedRoomsFactory.removeRoom(index);
   };
-```
+{% endhighlight %}
 
 The current index and navigation state has to be updated too when you click on a new tab:
 
-```language-js
+{% highlight js %}
 $scope.$watch("roomsCtrl.selectedIndex",function(newIndex){
     openedRoomsFactory.setSelectedIndex(newIndex);
     if(openedRoomsFactory.hasRoom()){
       $state.go("rooms.room",{id: openedRoomsFactory.getRoomByIndex(newIndex)._id});
     }
   });
-```
+{% endhighlight %}
 
 Next create the view for the tab layout (room.tabs.tmpl.html) with the following code:
 
-```language-html
+{% highlight html %}
 <md-content flex ng-if="roomsCtrl.rooms.length > 0">
 <md-subheader>Opened Rooms right now</md-subheader>
 <md-tabs md-dynamic-height md-selected="roomsCtrl.selectedIndex" md-border-bottom md-autoselect>
@@ -726,28 +726,28 @@ Next create the view for the tab layout (room.tabs.tmpl.html) with the following
     <div ui-view flex></div>
 </md-tabs>
 </md-content>
-```
+{% endhighlight %}
 
 Don't forget about unsubscribing the user when leaving the room! To achieve this, add the following changes to the logout method of the account.service.js file (add socketFactory and openedRoomsFactory dependencies too):
 
-```language-js
+{% highlight js %}
 var openedRooms = openedRoomsFactory.getRooms();
 //logout from rooms
 _.forEach(openedRooms, function (room) {
 socketFactory.emit("unsubscribe", {room: room._id, user: getLoggedInUser()});
 });
-```
+{% endhighlight %}
 
 Remove opened rooms too:
 
-```language-js
+{% highlight js %}
 delete $localStorage.rooms;
 delete $localStorage.index;
-```
+{% endhighlight %}
 
 Routing needs to be extended in the index.routes.js file. There is a state called "rooms" already, add to this the following changes:
 
-```language-js
+{% highlight js %}
 .state('rooms', {
   url: '/rooms',
   templateUrl: 'app/room/room.tabs.tmpl.html',
@@ -755,21 +755,21 @@ Routing needs to be extended in the index.routes.js file. There is a state calle
   controllerAs: 'roomsCtrl',
   data: {authenticated: true}
 });
-```
+{% endhighlight %}
 
 Add openedRoomsFactory dependency to create.room.fab.directive.js and following changes too (here you make sure when opening a new room it will be listed in the opened rooms and actually opened too):
 
-```language-js
+{% highlight js %}
 openedRoomsFactory.addRoom(result);
 $state.go("rooms.room",{id: result._id});
-```
+{% endhighlight %}
 
 
 ### Messages
 
 First create a directory called "message" for the message aspect. Then add a message.model.js file in this directory with the following content:
 
-```language-js
+{% highlight js %}
 (function () {
 'use strict';
 
@@ -783,11 +783,11 @@ function Message(apiUrl,$resource) {
 }
 
 })();
-```
+{% endhighlight %}
 
 Next create the service that is responsible for message handling (message.service.js):
 
-```language-js
+{% highlight js %}
 (function() {
 'use strict';
 
@@ -799,82 +799,82 @@ angular
 function MessageService($resource,apiUrl,Message,Room,AccountService) {
 }
 })();
-```
+{% endhighlight %}
 
 Add the following functions to the service:
 
 * Get Messages in a room:
-```language-js
+{% highlight js %}
 function getRoomMessages(roomId){
 	return Message.query({id: roomId});
 }
-```
+{% endhighlight %}
 
 * Create message in a room:
-```language-js
+{% highlight js %}
 function createRoomMessage(roomId, message){
 var newMessage = new Message();
 newMessage.text = message;
 newMessage.user = AccountService.getLoggedInUser();
 newMessage.$save({id: roomId});
 }
-```
+{% endhighlight %}
 
 To make these two functions available from the outside add the following statements:
 
-```language-js
+{% highlight js %}
 this.getRoomMessages = getRoomMessages;
 this.createRoomMessage = createRoomMessage;
-```
+{% endhighlight %}
 
 You need to call these functions in the room.item.controller.js. To achieve that add the missing dependencies and the following two variables:
 
-```language-js
+{% highlight js %}
 roomItemCtrl.newMessage = "";
 roomItemCtrl.messages = MessageService.getRoomMessages(roomId);
-```
+{% endhighlight %}
 
 Add a function that handles message creation:
 
-```language-js
+{% highlight js %}
 roomItemCtrl.createMessage = function () {
 MessageService.createRoomMessage(roomId, roomItemCtrl.newMessage);
 roomItemCtrl.newMessage = "";
 };
-```
+{% endhighlight %}
 
 Add the missing socket handling:
 
-```language-js
+{% highlight js %}
 socketFactory.on("new message",function (message) {
 roomItemCtrl.messages.push(message);
 });
-```
+{% endhighlight %}
 
 Open room/room.item.html template! Here create an Angular Material list, that will display the roomItemCtrl.messages variable:
 
-```language-html
+{% highlight html %}
 <md-list scroll="roomItemCtrl.messages">
 <md-subheader class="md-info">Messages in room {{ roomItemCtrl.room.name }}</md-subheader>
 <message ng-repeat="message in roomItemCtrl.messages" message="message"
          author="roomItemCtrl.allusers[message.authorId]"
          ng-class="{ 'repeated-author' : $index>0 && message.authorId == roomItemCtrl.messages[$index-1].authorId}"></message>
 </md-list>
-```
+{% endhighlight %}
 
 
 Create new message:
 
-```language-html
+{% highlight html %}
 <md-input-container class="md-accent">
 <label>New Message</label>
 <input ng-enter="roomItemCtrl.createMessage()" ng-model="roomItemCtrl.newMessage" md-maxlength="350"/>
 </md-input-container>
-```
+{% endhighlight %}
 
 Previously we used message directive, but it doesn't really exist. So create message.directive.js in the message folder:
 
-```language-js
+{% highlight js %}
 (function() {
 'use strict';
 
@@ -905,11 +905,11 @@ function message() {
 }
 
 })();
-```
+{% endhighlight %}
 
 As last step create the template for that directive with the following content:
 
-```language-html
+{% highlight html %}
 <md-list-item class="contact-item md-2-line selected">
 <img ng-src="{{ messageCtrl.author.imageUrl }}" class="md-avatar message-avatar"/>
 <div class="md-list-item-text compact">
@@ -917,7 +917,7 @@ As last step create the template for that directive with the following content:
   <div class="message-content">{{messageCtrl.message.text}}</div>
 </div>
 </md-list-item>
-```
+{% endhighlight %}
 
 Now you are ready, and hopefully you can use your brand new chat application.
 
