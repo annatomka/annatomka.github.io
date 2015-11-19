@@ -27,19 +27,19 @@ Demo is available here: https://angularchatexample.firebaseapp.com
 
 ##### Git
 If you use Git, you can clone the repository of the application with the following command:
-```language-js
+```javascript
 git clone https://github.com/annatomka/angular-chat.git
 ```
 
 ### Download as zip
 If you don't want / can't use Git, you can download the source from the following url:
-```language-js
+```javascript
 https://github.com/annatomka/angular-chat/archive/step_registration.zip
 ```
 ### Registration
 
 We have a login form as a starting form, but unfortunately there's no user we could log in to the chat. For this purpose let's create the registration form in this section. Extend index.routes.js with the following route:
-```language-js
+```javascript
 .state('registration', {
 url: '/registration',
 templateUrl: 'app/registration/registration.html',
