@@ -2,7 +2,7 @@
 layout: post
 title: MetoCat.com finally started!
 ---
-<a href="https://metocat.com" rel="MetoCat  main view">![MetoCat main view](/public/metocat_main.png)</a>
+<a href="https://metocat.com" rel="MetoCat  main view" target="_blank">![MetoCat main view](/public/metocat_main.png)</a>
 
 ### Meto... whaaaat?
 As the title tells you, we finally started our side project called MetoCat (nothing special in the name, we were just out of our creative
@@ -14,7 +14,7 @@ We wanted to build something simple, that can be scaled easily later, so the BVS
 ### Just another voting app, really?
 In MetoCat you can create similar voting forms, it's a dynamic version of BVS, but we are planning to build much more features because it's really awesome to work on your idea in your free time, especially with AngularJS (even if your idea is a small thing). Yeah, MetoCat is built in AngularJS (1.4).
 
-<a href="https://metocat.com/form/c8c9c40a-7df4-40e4-bccb-d8c99a0d5c6a" rel="MetoCat  form view">![MetoCat main view](/public/metocat_form.png)</a>
+<a href="https://metocat.com/form/c8c9c40a-7df4-40e4-bccb-d8c99a0d5c6a" rel="MetoCat  form view" target="_blank">![MetoCat main view](/public/metocat_form.png)</a>
 
 ### What features?
 So what feaures does MetoCat have right now? It's not a world-saving application (yet), so don't wait for that cool stuffs... but you can do the following things in it:
@@ -26,6 +26,6 @@ So what feaures does MetoCat have right now? It's not a world-saving application
 
 How embed looks like, you can checkout the BVS app:
 
-<a href="http://batmanvsupermanapp.com/#/statistics" rel="MetoCat Embed Example on Batman vs Superman Site">![MetoCat Embed example](/public/metocat_embed.png)</a>
+<a href="http://batmanvsupermanapp.com/#/statistics" rel="MetoCat Embed Example on Batman vs Superman Site" target="_blank">![MetoCat Embed example](/public/metocat_embed.png)</a>
 
 I hope you like the initiative. There will be more updates and features, just wait for it!
