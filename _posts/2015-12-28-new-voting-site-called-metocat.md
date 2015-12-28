@@ -17,6 +17,7 @@ In MetoCat you can create similar voting forms, it's a dynamic version of BVS, b
 
 ### What features?
 So what feaures does MetoCat have right now? It's not a world-saving application (yet), so don't wait for that cool stuffs... but you can do the following things in it:
+
 * Login with Twitter or Reddit (wait for so much more to come...)
 * Create voting forms (You can upload image to it, select multiple opponents, tags, you can create it as anonim)
 * Vote forms (even as anonim), see results (simple realtime statistics)
