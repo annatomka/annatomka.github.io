@@ -10,10 +10,14 @@ pills sorry... ).
 So, what is this side project? Basically it's the abstraction of the Batman vs Superman (BVS) application I created a few months ago.
 We wanted to build something simple, that can be scaled easily later, so the BVS app was the best starting point to do that.
 
-<a href="https://metocat.com" rel="MetoCat  main view">![MetoCat main view](/public/metocat_main.png)</a>
-
 ### Just another voting app, really?
 In MetoCat you can create similar voting forms, it's a dynamic version of BVS, but we are planning to build much more features because it's really awesome to work on your idea in your free time, especially with AngularJS (even if your idea is a small thing). Yeah, MetoCat is built in AngularJS (1.4).
+
+Here is the main page:
+<a href="https://metocat.com" rel="MetoCat  main view">![MetoCat main view](/public/metocat_main.png)</a>
+
+Here you can see a real form:
+<a href="https://metocat.com/form/c8c9c40a-7df4-40e4-bccb-d8c99a0d5c6a" rel="MetoCat  form view">![MetoCat main view](/public/metocat_form.png)</a>
 
 ### What features?
 So what feaures does MetoCat have right now? It's not a world-saving application (yet), so don't wait for that cool stuffs... but you can do the following things in it:
