@@ -25,6 +25,6 @@ So what feaures does MetoCat have right now? It's not a world-saving application
 
 How embed looks like, you can checkout the BVS app:
 
-<a href="https://batmanvsupermanapp.com/#/statistics" rel="MetoCat Embed Example on Batman vs Superman Site">![MetoCat Embed example](/public/metocat_embed.png)</a>
+<a href="http://batmanvsupermanapp.com/#/statistics" rel="MetoCat Embed Example on Batman vs Superman Site">![MetoCat Embed example](/public/metocat_embed.png)</a>
 
 I hope you like the initiative. There will be more updates and features, just wait for it!
