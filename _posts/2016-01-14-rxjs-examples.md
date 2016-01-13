@@ -14,4 +14,4 @@ If you'd like to learn RxJS, I hardly recommend these resources:
 [rx-book](https://xgrommx.github.io/rx-book/)
 [ReactiveX website](http://reactivex.io)
 
-![](/public/rxjs.jpg)
+<img style="margin: 0 auto;height: 159px;" src="/public/rxjs.jpg"/>
