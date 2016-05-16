@@ -3,21 +3,9 @@ layout: default
 title: Home
 ---
 <div class="posts">
-<script type="text/javascript">
-  RBExternalPortfolio=function(e,t,i,n){var s=this;s.domain=e,s.rows=i,s.columns=n,s.user_name=t,s.getHeight=function(){return 222*s.rows+85},s.getWidth=function(){return 240*s.columns+26},s.getSrc=function(){return"http://"+s.domain+"/people/"+s.user_name+"/external-portfolio?count="+s.rows*s.columns},s.createIframe=function(){var e=document.createElement("iframe");return e.src=s.getSrc(),e.width=s.getWidth(),e.height=s.getHeight(),e.frameBorder=0,e.scrolling="no",e.setAttribute("allowtransparency","true"),e},s.renderIframe=function(){var e=document.getElementById("rb-xzfcxvzx");e.parentNode.replaceChild(s.createIframe(),e)}};
-</script>
-<script id="rb-xzfcxvzx" type="text/javascript">new RBExternalPortfolio('www.redbubble.com', 'maximumart', 2, 4).renderIframe();</script>
-  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
- 
-  <!-- blogad -->
-  <ins class="adsbygoogle"
-       style="display:block"
-       data-ad-client="ca-pub-5391093868358681"
-       data-ad-slot="7539194857"
-       data-ad-format="auto"></ins>
-  <script>
-    (adsbygoogle = window.adsbygoogle || []).push({});
-  </script>
+<script type="text/javascript" src="http://www.redbubble.com/assets/external_portfolio.js"></script>
+<script id="rb-xzfcxvzx" type="text/javascript">new RBExternalPortfolio('www.redbubble.com', 'maximumart', 1, 4).renderIframe();</script>
+
 
   {% for post in paginator.posts %}
   <div class="post">
@@ -50,6 +38,19 @@ title: Home
     <span class="pagination-item newer">Newer</span>
   {% endif %}
 </div>
+
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+ 
+  <!-- blogad -->
+  <ins class="adsbygoogle"
+       style="display:block"
+       data-ad-client="ca-pub-5391093868358681"
+       data-ad-slot="7539194857"
+       data-ad-format="auto"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
             (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
