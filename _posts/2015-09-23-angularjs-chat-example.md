@@ -91,14 +91,14 @@ Add registration.html with the following HTML:
       <md-content class="md-padding md-cyan-theme">
         <form name="registration">
           <basic-info user="registrationCtrl.user"></basic-info>
-          <div class="md-actions" layout="column" layout-align="center">
+           <md-dialog-actions layout="column" layout-align="center">
             <md-button class="md-raised md-primary" layout="row" layout-align="center center" ng-disabled="registration.$invalid" ng-click="registrationCtrl.register()">
               Registration
             </md-button>
             <a
               class="md-primary md-button md-cyan-theme" ui-sref="login"
               aria-label="Already registered? Login now">Already registered? Login now</a>
-          </div>
+             </md-dialog-actions>
 
         </form>
       </md-content>
@@ -125,7 +125,7 @@ If you've got stucked in the previous step, just switch to branch *step_profile*
 git checkout step_profile
 {% endhighlight %}
 
-Complete the *profile.directive.js* directive to load the current user:   egyszerűbb
+Complete the *profile.directive.js* directive to load the current user: 
 
 {% highlight js %}
 var loggedinUser = AccountService.getLoggedInUser();
@@ -180,7 +180,7 @@ My Profile
 We should also display the loggedin user, so paste the following code between the first md-content tags also in the *leftnav.html* template:
 
 {% highlight html %}
-<img class="avatar" ng-src="{{ leftnavCtrl.user.imageUrl }}"/>
+ <avatar class="avatar" user="leftnavCtrl.user"></avatar>
 <h3 class="fullname" layout="row" layout-align="center center">{{ leftnavCtrl.user  | fullname }}</h3>
 <small class="username" layout="row" layout-align="center center">@{{ leftnavCtrl.user.username}}</small>
 {% endhighlight %}
@@ -194,9 +194,10 @@ menuCtrl.user = AccountService.getLoggedInUser();
 Display the user avatar as a button (menu.html), that way the user can click on it and edit its profile:
 
 {% highlight html %}
-<md-button profile-button class="md-icon-button" aria-label="More"  ng-if="$root.loggedIn">
-<img ng-src="{{ menuCtrl.user.imageUrl }}" class="md-avatar message-avatar" style="    height: 50px;
-background-color: white;"/>
+    <md-button profile-button  aria-label="More"  ng-if="$root.loggedIn">
+      <img ng-src="{{ menuCtrl.user.imageUrl }}" style="     border-radius: 50%;
+    margin-top: 10px;   height: 50px;
+    background-color: white;"/>
 </md-button>
 {% endhighlight %}
 
@@ -313,7 +314,7 @@ And finally compose the create room dialog template too (create.room.dialog.tmpl
     <md-button class="md-primary md-raised" layout="row" layout-align="center center" ng-click="createRoomCtrl.create()">
       Create
     </md-button>
-  </div>
+ </md-dialog-actions>
 </form>
 </md-dialog>
 {% endhighlight %}
@@ -417,12 +418,16 @@ The template is missing though, so add a room.list.tmpl.html file with the follo
 
 {% highlight html %}
 <md-bottom-sheet class="md-list md-has-header">
-<md-subheader>Available Rooms <small>Click the room you want to open</small></md-subheader>
-<md-chips ng-model="roomListCtrl.rooms" readonly="true">
-  <md-chip-template>
-    <strong>{{$chip.name}}</strong>
-  </md-chip-template>
-</md-chips>
+  <md-subheader>Available Rooms
+    <small>Click the room you want to open</small>
+  </md-subheader>
+  <md-content style="max-height: 200px;">
+    <md-chips ng-model="roomListCtrl.rooms" readonly="true">
+      <md-chip-template>
+        <strong ng-click="roomListCtrl.openRoom($index,$chip)">{{$chip.name}}</strong>
+      </md-chip-template>
+    </md-chips>
+  </md-content>
 </md-bottom-sheet>
 {% endhighlight %}
 
@@ -495,14 +500,14 @@ Add the following functions to the opened.rooms.factory.js:
 * Add room to opened rooms:
 {% highlight js %}
   roomFactoryObj.addRoom = function(room){
-    if(typeof $localStorage.rooms == "undefined") {
-      $localStorage.rooms = [];
-    }
-
-    room.index = $localStorage.rooms.length;
-    $localStorage.index = room.index;
-    $localStorage.rooms.push(room);
-    $rootScope.$emit("room.added");
+     if(typeof $localStorage.rooms == "undefined") {
+            $localStorage.rooms = [];
+          }
+    
+          room.index = $localStorage.rooms.length;
+          $localStorage.rooms.push(room);
+          $localStorage.index = room.index;
+          $rootScope.$emit("room.added");
   };
 {% endhighlight %}
 
@@ -510,6 +515,9 @@ Add the following functions to the opened.rooms.factory.js:
 {% highlight js %}
 roomFactoryObj.removeRoom = function(index){
     $localStorage.rooms.splice(index, 1);
+         _.forEach($localStorage.rooms, function(room, i) {
+           room.index = i;
+         });
   };
 {% endhighlight %}
 
@@ -542,13 +550,24 @@ function syncRoomsFromLocalStorage(){
 When you click a room in the list, it would be awesome to actually open the selected room. That means a new navigation aka state in the index.route.js file:
 
 {% highlight js %}
-.state('rooms.room', {
 url: '/:id',
-templateUrl: 'app/room/room.item.html',
-controller: 'RoomItemController',
-controllerAs: 'roomItemCtrl',
-data: {authenticated: true}
-})
+        templateUrl: 'app/room/room.item.html',
+        controller: 'RoomItemController',
+        controllerAs: 'roomItemCtrl',
+        data: {authenticated: true},
+        resolve: {
+          users : function (allUsersFactory) {
+            return allUsersFactory.initUsers();
+          },
+          room: function (RoomService, $stateParams) {
+            var roomId = $stateParams.id;
+            return RoomService.getRoom(roomId).$promise;
+          },
+          messages: function (MessageService, $state, $stateParams) {
+            var roomId = $stateParams.id;
+            return MessageService.getRoomMessages(roomId).$promise;
+          }
+        }
 {% endhighlight %}
 
 As you can see we also need a RoomItemController for this state, so create room.item.controller.js file in the room directory with the following content:
@@ -562,22 +581,21 @@ angular
   .controller("RoomItemController", RoomItemController);
 
 /** @ngInject */
-function RoomItemController($scope, $timeout, $mdBottomSheet, toastr, RoomService, $log, $rootScope, $state, openedRoomsFactory, apiUrl, socketFactory, AccountService, allUsersFactory) {
-  var roomItemCtrl = this;
-  var roomId = $state.params.id;
+function RoomItemController($scope, users, room, messages, MessageService, RoomService, $log, $rootScope, $state, openedRoomsFactory, apiUrl, socketFactory, AccountService, Message, allUsersFactory) {
+    var roomItemCtrl = this;
+     roomItemCtrl.newMessage = "";
+     var roomId = $state.params.id;
+     roomItemCtrl.messages = messages;
+     roomItemCtrl.users = [];
+     roomItemCtrl.allusers = allUsersFactory.users;
 
-  roomItemCtrl.users = [];
-  roomItemCtrl.allusers = allUsersFactory.users;
-
-  RoomService.getRoom(roomId).$promise.then(function (room) {
-    _.forEach(room.users, function (userId) {
-      if (!isUserAlreadyAdded(userId)) {
-        roomItemCtrl.users.push(allUsersFactory.users[userId]);
-      }
-    });
-
-    roomItemCtrl.room = room;
-  });
+   _.forEach(room.users, function (userId) {
+        if (!isUserAlreadyAdded(userId)) {
+          roomItemCtrl.users.push(allUsersFactory.users[userId]);
+        }
+      });
+  
+      roomItemCtrl.room = room;
 
   function isUserAlreadyAdded(userId){
     var userfound = _.findWhere(roomItemCtrl.users, {'_id': userId});
@@ -590,23 +608,23 @@ function RoomItemController($scope, $timeout, $mdBottomSheet, toastr, RoomServic
 Don't forget to subscribe on your favourite socket.io events in the controller:
 
 {% highlight js %}
-socketFactory.emit("subscribe", {room: roomId, user: AccountService.getLoggedInUser()});
+ socketFactory.emit("subscribe", {room: roomId, user: AccountService.getLoggedInUser()});
 
-  socketFactory.on("user.joined",function (user) {
+    socketFactory.on("user.joined", function (user) {
       if (!isUserAlreadyAdded(user._id)) {
         roomItemCtrl.users.push(user);
       }
-  });
+    });
 
-  socketFactory.on("user.left",function (user) {
+    socketFactory.on("user.left", function (user) {
       _.remove(roomItemCtrl.users, {
         _id: user._id
       });
-  });
+    });
 
-  $scope.$on("$destroy", function () {
-    socketFactory.emit("unsubscribe", {room: roomId, user: AccountService.getLoggedInUser()});
-  });
+    $scope.$on("$destroy", function () {
+      socketFactory.emit("unsubscribe", {room: roomId, user: AccountService.getLoggedInUser()});
+    });
 {% endhighlight %}
 
 Next create the basic room view in room.item.html file:
@@ -617,21 +635,21 @@ Next create the basic room view in room.item.html file:
   <md-content style="height: 60vh;">
 
 </md-content>
-  <md-content layout-padding>
+  <md-content layout-padding layout="column">
 
   </md-content>
 </md-content>
 <md-content class="side-nav room-users" hide-sm layout="column" flex="18">
   <md-list layout-fill>
     <md-subheader class="md-accent">Available users</md-subheader>
-    <md-list-item class="md-2-line contact-item selected" ng-repeat="(index, contact) in roomItemCtrl.users">
-      <img ng-src='{{ contact.imageUrl }}' class="md-avatar" alt="{{contact.name}}"/>
-      <div class="md-list-item-text compact">
-        <h3>{{contact | fullname }}</h3>
-        <p>@{{contact.username}}</p>
-      </div>
-      <md-divider></md-divider>
-    </md-list-item>
+   <md-list-item class="md-2-line contact-item selected" ng-repeat="(index, contact) in roomItemCtrl.users track by contact._id" ng-show="contact.username">
+           <avatar user="contact"></avatar>
+           <div class="md-list-item-text compact">
+             <h3>{{contact | fullname }}</h3>
+             <p>@{{contact.username}}</p>
+           </div>
+           <md-divider></md-divider>
+         </md-list-item>
   </md-list>
 </md-content>
 </div>
@@ -681,16 +699,25 @@ In the controller we need to synchronize the opened rooms:
 {% highlight js %}
 syncFromOpenedRoomsFactory();
 
-function syncFromOpenedRoomsFactory(){
-    roomsCtrl.selectedIndex = openedRoomsFactory.getSelectedIndex();
-    roomsCtrl.rooms = openedRoomsFactory.getRooms();
-  }
-{% endhighlight %}
+$rootScope.$on("room.added", onRoomAdded);
 
-You should call this method when you receive a "room.added" event:
+    function onRoomAdded() {
+      syncFromOpenedRoomsFactory();
+      goToRoom(roomsCtrl.selectedIndex);
+    }
 
-{% highlight js %}
-$rootScope.$on("room.added",syncFromOpenedRoomsFactory);
+    function syncFromOpenedRoomsFactory(){
+      roomsCtrl.selectedIndex = openedRoomsFactory.getSelectedIndex();
+      roomsCtrl.rooms = openedRoomsFactory.getRooms();
+    }
+
+    function goToRoom(newIndex) {
+      if(openedRoomsFactory.hasRoom()){
+        $state.go("rooms.room",{id: openedRoomsFactory.getRoomByIndex(newIndex)._id});
+      }else{
+        $state.go("rooms");
+      }
+    }
 {% endhighlight %}
 
 When you close a tab, you have to remove the room from the factory:
@@ -698,18 +725,17 @@ When you close a tab, you have to remove the room from the factory:
 {% highlight js %}
 roomsCtrl.removeRoom = function (index) {
     openedRoomsFactory.removeRoom(index);
+     goToRoom(index-1);
   };
 {% endhighlight %}
 
 The current index and navigation state has to be updated too when you click on a new tab:
 
 {% highlight js %}
-$scope.$watch("roomsCtrl.selectedIndex",function(newIndex){
-    openedRoomsFactory.setSelectedIndex(newIndex);
-    if(openedRoomsFactory.hasRoom()){
-      $state.go("rooms.room",{id: openedRoomsFactory.getRoomByIndex(newIndex)._id});
-    }
-  });
+ $scope.$watch("roomsCtrl.selectedIndex",function(newIndex){
+      openedRoomsFactory.setSelectedIndex(newIndex);
+      goToRoom(newIndex);
+    });
 {% endhighlight %}
 
 Next create the view for the tab layout (room.tabs.tmpl.html) with the following code:
@@ -717,13 +743,15 @@ Next create the view for the tab layout (room.tabs.tmpl.html) with the following
 {% highlight html %}
 <md-content flex ng-if="roomsCtrl.rooms.length > 0">
 <md-subheader>Opened Rooms right now</md-subheader>
-<md-tabs md-dynamic-height md-selected="roomsCtrl.selectedIndex" md-border-bottom md-autoselect>
+  <md-tabs md-dynamic-height md-selected="roomsCtrl.selectedIndex" md-border-bottom>
   <md-tab ng-repeat="room in roomsCtrl.rooms">
     <md-tab-label>{{room.name}} <a ng-click="roomsCtrl.removeRoom($index,room)">
       <md-icon md-svg-icon="navigation:close"></md-icon>
     </a>
     </md-tab-label>
-    <div ui-view flex></div>
+     <md-tab-body>
+            <div ng-if="roomsCtrl.selectedIndex === $index" ui-view flex></div>
+          </md-tab-body>
 </md-tabs>
 </md-content>
 {% endhighlight %}
@@ -827,14 +855,7 @@ this.getRoomMessages = getRoomMessages;
 this.createRoomMessage = createRoomMessage;
 {% endhighlight %}
 
-You need to call these functions in the room.item.controller.js. To achieve that add the missing dependencies and the following two variables:
-
-{% highlight js %}
-roomItemCtrl.newMessage = "";
-roomItemCtrl.messages = MessageService.getRoomMessages(roomId);
-{% endhighlight %}
-
-Add a function that handles message creation:
+Add a function that handles message creation in room.item.controller.js:
 
 {% highlight js %}
 roomItemCtrl.createMessage = function () {
@@ -854,12 +875,12 @@ roomItemCtrl.messages.push(message);
 Open room/room.item.html template! Here create an Angular Material list, that will display the roomItemCtrl.messages variable:
 
 {% highlight html %}
-<md-list scroll="roomItemCtrl.messages">
-<md-subheader class="md-info">Messages in room {{ roomItemCtrl.room.name }}</md-subheader>
-<message ng-repeat="message in roomItemCtrl.messages" message="message"
-         author="roomItemCtrl.allusers[message.authorId]"
-         ng-class="{ 'repeated-author' : $index>0 && message.authorId == roomItemCtrl.messages[$index-1].authorId}"></message>
-</md-list>
+ <md-list scroll="roomItemCtrl.messages">
+        <md-subheader class="md-info">Messages in room {{ roomItemCtrl.room.name }}</md-subheader>
+        <message ng-repeat="message in roomItemCtrl.messages track by message._id" message="message"
+                 author="roomItemCtrl.allusers[message.authorId]"
+                 ng-class="{ 'repeated-author' : $index>0 && message.authorId == roomItemCtrl.messages[$index-1].authorId}"></message>
+      </md-list>
 {% endhighlight %}
 
 
@@ -910,13 +931,19 @@ function message() {
 As last step create the template for that directive with the following content:
 
 {% highlight html %}
-<md-list-item class="contact-item md-2-line selected">
-<img ng-src="{{ messageCtrl.author.imageUrl }}" class="md-avatar message-avatar"/>
-<div class="md-list-item-text compact">
-  <p style="text-align: right;"><small><strong>{{messageCtrl.author.username | username }}</strong>, {{ messageCtrl.message | createdDate }}</small></p>
-  <div class="message-content">{{messageCtrl.message.text}}</div>
-</div>
+<md-list-item class="contact-item md-2-line selected" ng-if="messageCtrl.author">
+
+  <avatar user="messageCtrl.author"  class="md-avatar message-avatar"></avatar>
+
+  <div class="md-list-item-text compact">
+    <p style="text-align: right;"><small><strong>{{messageCtrl.author.username | username }}</strong>, {{ messageCtrl.message | createdDate }}</small></p>
+    <div class="message-content" ng-bind-html="messageCtrl.message.text | embed "></div>
+    <ng-embed
+      embed-data="messageCtrl.message.text" embed-options="$root.embedOptions"
+    ></ng-embed>
+  </div>
 </md-list-item>
+
 {% endhighlight %}
 
 Now you are ready, and hopefully you can use your brand new chat application.
