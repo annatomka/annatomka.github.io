@@ -119,11 +119,6 @@ aria-label="Don't have an account? Create one now">Don't have an account? Create
 ### Profile
 
 #### step_profile
-If you've got stucked in the previous step, just switch to branch *step_profile* and continue work from here:
-
-{% highlight js %}
-git checkout step_profile
-{% endhighlight %}
 
 Complete the *profile.directive.js* directive to load the current user: 
 
@@ -237,7 +232,7 @@ function RoomUser(apiUrl,$resource) {
 })();
 {% endhighlight %}
 
-Next we have to deal with the room servie. Create room.service.js file with the following content:
+Next we have to deal with the room service. Create room.service.js file with the following content:
 
 {% highlight js %}
 (function () {
@@ -550,7 +545,8 @@ function syncRoomsFromLocalStorage(){
 When you click a room in the list, it would be awesome to actually open the selected room. That means a new navigation aka state in the index.route.js file:
 
 {% highlight js %}
-url: '/:id',
+.state('rooms.room', {
+        url: '/:id',
         templateUrl: 'app/room/room.item.html',
         controller: 'RoomItemController',
         controllerAs: 'roomItemCtrl',
@@ -568,6 +564,7 @@ url: '/:id',
             return MessageService.getRoomMessages(roomId).$promise;
           }
         }
+      })
 {% endhighlight %}
 
 As you can see we also need a RoomItemController for this state, so create room.item.controller.js file in the room directory with the following content:
