@@ -722,7 +722,7 @@ When you close a tab, you have to remove the room from the factory:
 {% highlight js %}
 roomsCtrl.removeRoom = function (index) {
     openedRoomsFactory.removeRoom(index);
-     goToRoom(index-1);
+      goToRoom(openedRoomsFactory.getRooms().length-1);
   };
 {% endhighlight %}
 
@@ -934,10 +934,11 @@ As last step create the template for that directive with the following content:
 
   <div class="md-list-item-text compact">
     <p style="text-align: right;"><small><strong>{{messageCtrl.author.username | username }}</strong>, {{ messageCtrl.message | createdDate }}</small></p>
-    <div class="message-content" ng-bind-html="messageCtrl.message.text | embed "></div>
-    <ng-embed
-      embed-data="messageCtrl.message.text" embed-options="$root.embedOptions"
-    ></ng-embed>
+     <div class="message-content">
+          <ng-embed
+            embed-data="messageCtrl.message.text" embed-options="$root.embedOptions"
+          ></ng-embed>
+        </div>
   </div>
 </md-list-item>
 
