@@ -175,9 +175,8 @@ My Profile
 We should also display the loggedin user, so paste the following code between the first md-content tags also in the *leftnav.html* template:
 
 {% highlight html %}
- <avatar class="avatar" user="leftnavCtrl.user"></avatar>
+<avatar class="avatar" user="leftnavCtrl.user"></avatar>
 <h3 class="fullname" layout="row" layout-align="center center">{{ leftnavCtrl.user  | fullname }}</h3>
-<small class="username" layout="row" layout-align="center center">{{ leftnavCtrl.user.username }}</small>
 {% endhighlight %}
 
 Let's put the image of the user in the menu. To do this first inject AccountService in the *menu.directive.js* and query the loggedin user:
